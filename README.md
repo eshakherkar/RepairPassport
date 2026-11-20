@@ -4,10 +4,11 @@
 
 RepairPassport gives each household appliance (a fridge, washing machine, dishwasher, oven or boiler) its own digital passport. You upload repair bills and invoices, AI extracts the key details, and the app keeps a clear, chronological repair history that you can share with a QR code.
 
-> **Status:** early development. The landing page and the dashboard are built and run on **fictional sample data**. There are no user accounts, database or uploads yet.
+> **Status:** early development. Accounts and the database are set up; the dashboard still shows **fictional sample data** until it is connected to the database. There are no uploads yet.
 
 ## What works now
 
+- **Accounts** (`/sign-up`, `/sign-in`): email and password, with email confirmation; passwords need 8+ characters including a letter and a number. The dashboard pages require signing in.
 - **Dashboard** (`/dashboard`): overview cards (appliances, repair records, active warranties with an "expiring soon" warning), an appliance preview and recent repair activity
 - **Appliance list** (`/appliances`): every appliance with its location, repair count and warranty status
 - **Appliance profiles** (`/appliances/<id>`): details, all warranties with today's status, and a chronological repair timeline with costs, parts, service providers and repair warranties
@@ -83,7 +84,9 @@ app/
   (marketing)/          Route group for public pages (brackets keep it out of the URL)
     layout.tsx          Marketing header and footer
     page.tsx            The landing page (/)
-  (app)/                Route group for the dashboard app
+  (auth)/               Route group for /sign-in, /sign-up, /check-email, /auth-error
+  auth/confirm/         Handles the link in confirmation emails
+  (app)/                Route group for the dashboard app (requires sign-in)
     layout.tsx          App shell: sidebar (desktop), top bar with tabs (phones)
     error.tsx           "Something went wrong" page with Try again
     dashboard/          /dashboard
@@ -120,6 +123,17 @@ scripts/
 supabase/
   migrations/           Database changes, applied in order (see "Database" below)
 ```
+
+## Accounts and sign-in
+
+Sign-in uses [Supabase Auth](https://supabase.com/docs/guides/auth) with email and password.
+
+- `proxy.ts` (Next.js 16's name for middleware) runs before each page. It refreshes the session cookie and sends signed-out visitors from `/dashboard`, `/appliances` and `/repairs` to `/sign-in?next=…`.
+- `lib/auth/session.ts` checks who is signed in with `getClaims()`, which verifies the session token. Pages and server actions check again themselves; the proxy is only a first, fast check.
+- `lib/auth/actions.ts` holds the sign-up, sign-in and sign-out Server Actions.
+- After sign-in, users only return to pages on this site (`safeNextPath`), never to outside links.
+
+**Supabase settings** (Dashboard → Authentication → URL Configuration): Site URL `http://localhost:3000`, and add `http://localhost:3000/**` to Redirect URLs so confirmation links can return to `/auth/confirm`.
 
 ## Database
 

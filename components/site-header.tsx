@@ -24,7 +24,17 @@ export function SiteHeader() {
               {link.label}
             </a>
           ))}
-          <ButtonLink href="/dashboard" size="sm" className="sm:ml-2">
+          {/*
+            The wrapper does the hiding: ButtonLink always sets its own
+            display (inline-flex), which would override a "hidden" class.
+          */}
+          <span className="hidden sm:ml-2 sm:inline-flex">
+            <ButtonLink href="/sign-in" size="sm" variant="secondary">
+              Sign in
+            </ButtonLink>
+          </span>
+          {/* Signed-out visitors are taken to sign-in first (proxy.ts). */}
+          <ButtonLink href="/dashboard" size="sm">
             Open dashboard
           </ButtonLink>
         </nav>
