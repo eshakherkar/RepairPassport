@@ -69,9 +69,17 @@ app/
   (marketing)/          Route group for public pages (brackets keep it out of the URL)
     layout.tsx          Marketing header and footer
     page.tsx            The landing page (/)
+  (app)/                Route group for the dashboard app
+    layout.tsx          App shell: sidebar (desktop), top bar with tabs (phones)
+    dashboard/          /dashboard
+    appliances/         /appliances and /appliances/new
+    repairs/upload/     /repairs/upload
 components/
+  logo.tsx              RepairPassport wordmark
   site-header.tsx       Marketing navigation bar
   site-footer.tsx       Marketing footer
+  app-shell/            App navigation, primary actions, sample data notice
+  ui/                   Reusable building blocks: ButtonLink, PageHeader, EmptyState
 lib/
   types.ts              Data shapes: Appliance, RepairRecord, warranties
   warranty.ts           Warranty rules: active / expiring soon / expired
