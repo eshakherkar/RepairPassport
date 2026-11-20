@@ -1,0 +1,56 @@
+# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# Anything listed here is never tracked by Git, so it can't be pushed to GitHub.
+
+# ---- Dependencies (reinstall any time with `npm install`) ----
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ---- Build output (recreated by `npm run build` / `npm run dev`) ----
+/.next/
+/out/
+/build
+/dist
+*.tsbuildinfo
+next-env.d.ts
+
+# ---- Testing ----
+/coverage
+
+# ---- Environment files and secrets: NEVER commit these ----
+# Real values live in .env.local on your own computer only.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+secrets/
+credentials*.json
+service-account*.json
+
+# ---- Hosting / deployment ----
+.vercel
+
+# ---- Logs ----
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+# ---- Operating system and editor files ----
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

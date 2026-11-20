@@ -1,0 +1,86 @@
+# RepairPassport
+
+**A digital maintenance passport for household appliances.**
+
+RepairPassport gives each household appliance (a fridge, washing machine, dishwasher, oven or boiler) its own digital passport. You upload repair bills and invoices, AI extracts the key details, and the app keeps a clear, chronological repair history that you can share with a QR code.
+
+> **Status:** early development. This repository currently contains the project foundation and a landing page. Core features are not built yet.
+
+## Why it exists
+
+Appliance repair bills usually end up lost in a drawer or an inbox. When the appliance breaks again, nobody remembers what was fixed, which parts were replaced, what it cost or whether the repair is still under warranty. A clear maintenance history:
+
+- helps technicians diagnose problems faster,
+- shows at a glance whether a repair or part is still under warranty,
+- helps decide whether to repair or replace an appliance,
+- gives buyers, tenants and landlords a trustworthy record, and
+- keeps appliances in use for longer, cutting waste.
+
+## Planned features
+
+- [ ] **Appliance profiles:** a digital profile for each household appliance (type, brand, model, purchase details)
+- [ ] **Bill and invoice uploads:** attach repair bills and invoices to the right appliance
+- [ ] **AI extraction:** pull the repair date, issue, cost, replaced parts and warranty details from each uploaded bill, for the user to review
+- [ ] **Repair history:** a chronological timeline of every repair and service per appliance
+- [ ] **QR code sharing:** generate a QR code that shares an appliance's maintenance history
+- [ ] **AI assistant** *(later)*: ask questions about an appliance's history, such as "When was the dishwasher pump last replaced?"
+
+## Tech stack
+
+| Technology | What it's used for |
+| --- | --- |
+| [Next.js](https://nextjs.org) (App Router) | The web framework: pages, routing and the server |
+| [React](https://react.dev) | Building the user interface from components |
+| [TypeScript](https://www.typescriptlang.org) | JavaScript with types, which catches mistakes before the code runs |
+| [Tailwind CSS](https://tailwindcss.com) | Styling with small utility classes |
+| [ESLint](https://eslint.org) | Checking code for common problems |
+| [Lucide React](https://lucide.dev) | Icons |
+
+## Getting started
+
+You need [Node.js](https://nodejs.org) (which includes npm) installed.
+
+```bash
+# 1. Install dependencies (only needed once, or after package.json changes)
+npm install
+
+# 2. Start the development server
+npm run dev
+```
+
+Then open <http://localhost:3000> in your browser. The page reloads automatically when you save a file. Press `Ctrl + C` in the terminal to stop the server.
+
+## Useful commands
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Starts the development server with live reload |
+| `npm run lint` | Checks the code with ESLint |
+| `npx tsc --noEmit` | Type-checks the code with TypeScript |
+| `npm run build` | Creates an optimised production build |
+| `npm run start` | Runs the production build (after `npm run build`) |
+
+## Project structure
+
+```text
+app/
+  layout.tsx       Shared page shell: fonts, header, footer, metadata
+  page.tsx         The home page (/): landing page describing the product
+  globals.css      Global styles and colour tokens for Tailwind
+components/
+  site-header.tsx  Top navigation bar
+  site-footer.tsx  Page footer
+public/            Static files served as-is (images, icons)
+```
+
+## Environment variables and secrets
+
+This project doesn't need any environment variables yet. When it does:
+
+- put real values in a `.env.local` file, which Git ignores;
+- never commit API keys, passwords or tokens;
+- document the variable *names* (without real values) in a `.env.example` file.
+
+## License
+
+No license has been chosen yet. Until one is added, all rights are reserved by the author.
