@@ -26,7 +26,11 @@ export default function AppliancesPage() {
         }
       />
 
-      <section aria-label="Appliance list">
+      <section aria-labelledby="appliance-list-heading">
+        {/* Keeps headings in order (h1 → h2 → card h3) for screen readers. */}
+        <h2 id="appliance-list-heading" className="sr-only">
+          All appliances
+        </h2>
         {/* Warranty badges use today's date, so the list loads per visit. */}
         <Suspense fallback={<ApplianceListSkeleton count={6} />}>
           <ApplianceList />

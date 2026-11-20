@@ -50,7 +50,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </nav>
         </header>
 
-        <main className="flex-1">
+        <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
           <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
             <SampleDataNotice />
             {children}

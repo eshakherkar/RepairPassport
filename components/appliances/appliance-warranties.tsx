@@ -59,7 +59,7 @@ export async function ApplianceWarranties({
 export function ApplianceWarrantiesSkeleton() {
   return (
     <Panel title="Warranties">
-      <div className="grid animate-pulse gap-4" aria-hidden="true">
+      <div className="grid motion-safe:animate-pulse gap-4" aria-hidden="true">
         {[0, 1].map((i) => (
           <div key={i} className="space-y-2">
             <div className="h-4 w-1/2 rounded bg-border" />

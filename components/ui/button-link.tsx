@@ -1,25 +1,10 @@
 import Link from "next/link";
 import type { ComponentProps } from "react";
-
-type Variant = "primary" | "secondary";
-type Size = "sm" | "md";
-
-const base =
-  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand";
-
-const variants: Record<Variant, string> = {
-  primary: "bg-brand text-background hover:bg-brand-hover",
-  secondary: "border border-border bg-background hover:bg-surface",
-};
-
-const sizes: Record<Size, string> = {
-  sm: "h-9 px-3 text-sm",
-  md: "h-10 px-4 text-sm",
-};
+import { buttonClassName, type ButtonSize, type ButtonVariant } from "./button-styles";
 
 type ButtonLinkProps = ComponentProps<typeof Link> & {
-  variant?: Variant;
-  size?: Size;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
 };
 
 /**
@@ -33,9 +18,6 @@ export function ButtonLink({
   ...props
 }: ButtonLinkProps) {
   return (
-    <Link
-      className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
-      {...props}
-    />
+    <Link className={buttonClassName(variant, size, className)} {...props} />
   );
 }

@@ -117,7 +117,7 @@ async function ApplianceProfileContent({
 /** Placeholder for the whole profile while the appliance loads. */
 function ProfileSkeleton() {
   return (
-    <div className="grid animate-pulse gap-6" aria-hidden="true">
+    <div className="grid motion-safe:animate-pulse gap-6" aria-hidden="true">
       <div className="flex items-center gap-4">
         <div className="size-10 rounded-lg bg-border" />
         <div className="space-y-2">

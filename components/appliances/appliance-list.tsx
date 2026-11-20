@@ -56,7 +56,7 @@ export function ApplianceListSkeleton({ count = 3 }: { count?: number }) {
       {Array.from({ length: count }, (_, i) => (
         <div
           key={i}
-          className="animate-pulse rounded-xl border border-border bg-background p-5"
+          className="motion-safe:animate-pulse rounded-xl border border-border bg-background p-5"
         >
           <div className="flex items-center gap-3">
             <div className="size-10 rounded-lg bg-border" />

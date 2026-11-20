@@ -35,7 +35,7 @@ export function StatCard({ icon: Icon, label, value, detail }: StatCardProps) {
 export function StatCardSkeleton() {
   return (
     <div
-      className="animate-pulse rounded-xl border border-border bg-background p-5"
+      className="motion-safe:animate-pulse rounded-xl border border-border bg-background p-5"
       aria-hidden="true"
     >
       <div className="flex items-center gap-3">

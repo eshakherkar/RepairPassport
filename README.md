@@ -4,7 +4,16 @@
 
 RepairPassport gives each household appliance (a fridge, washing machine, dishwasher, oven or boiler) its own digital passport. You upload repair bills and invoices, AI extracts the key details, and the app keeps a clear, chronological repair history that you can share with a QR code.
 
-> **Status:** early development. This repository currently contains the project foundation and a landing page. Core features are not built yet.
+> **Status:** early development. The landing page and the dashboard are built and run on **fictional sample data**. There are no user accounts, database or uploads yet.
+
+## What works now
+
+- **Dashboard** (`/dashboard`): overview cards (appliances, repair records, active warranties with an "expiring soon" warning), an appliance preview and recent repair activity
+- **Appliance list** (`/appliances`): every appliance with its location, repair count and warranty status
+- **Appliance profiles** (`/appliances/<id>`): details, all warranties with today's status, and a chronological repair timeline with costs, parts, service providers and repair warranties
+- **Responsive and accessible:** works from 320px phones to desktops in light and dark mode, keyboard-friendly with a skip link and visible focus outlines, colour contrast meets WCAG AA, and respects "reduce motion"
+
+"Add appliance" and "Upload repair bill" lead to placeholder pages until those features are built.
 
 ## Why it exists
 
@@ -18,10 +27,10 @@ Appliance repair bills usually end up lost in a drawer or an inbox. When the app
 
 ## Planned features
 
-- [ ] **Appliance profiles:** a digital profile for each household appliance (type, brand, model, purchase details)
+- [ ] **Appliance profiles:** a digital profile for each household appliance (type, brand, model, purchase details). *Viewing is built; adding and editing are not.*
 - [ ] **Bill and invoice uploads:** attach repair bills and invoices to the right appliance
 - [ ] **AI extraction:** pull the repair date, issue, cost, replaced parts and warranty details from each uploaded bill, for the user to review
-- [ ] **Repair history:** a chronological timeline of every repair and service per appliance
+- [ ] **Repair history:** a chronological timeline of every repair and service per appliance. *The timeline is built; it shows sample data until uploads exist.*
 - [ ] **QR code sharing:** generate a QR code that shares an appliance's maintenance history
 - [ ] **AI assistant** *(later)*: ask questions about an appliance's history, such as "When was the dishwasher pump last replaced?"
 
@@ -71,6 +80,7 @@ app/
     page.tsx            The landing page (/)
   (app)/                Route group for the dashboard app
     layout.tsx          App shell: sidebar (desktop), top bar with tabs (phones)
+    error.tsx           "Something went wrong" page with Try again
     dashboard/          /dashboard
     appliances/         /appliances and /appliances/new
       [applianceId]/    /appliances/kitchen-refrigerator etc.: appliance profile and repair timeline
@@ -83,7 +93,8 @@ components/
   appliances/           ApplianceCard, ApplianceList, ApplianceIcon, WarrantyBadge,
                         ApplianceDetails, ApplianceWarranties, RepairTimeline, RecordSourceBadge
   dashboard/            StatCard, OverviewStats, RecentRepairs
-  ui/                   Reusable building blocks: Badge, ButtonLink, PageHeader, Panel, EmptyState
+  ui/                   Reusable building blocks: Badge, ButtonLink (+ shared button styles),
+                        PageHeader, Panel, EmptyState
 lib/
   types.ts              Data shapes: Appliance, RepairRecord, warranties
   warranty.ts           Warranty rules: active / expiring soon / expired, appliance cover

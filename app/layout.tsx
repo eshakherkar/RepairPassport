@@ -33,7 +33,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col font-sans">{children}</body>
+      <body className="flex min-h-full flex-col font-sans">
+        {/*
+          Hidden until focused with Tab: lets keyboard and screen-reader
+          users jump past the navigation straight to the page content.
+        */}
+        <a
+          href="#main-content"
+          className="sr-only z-50 rounded-lg bg-brand px-4 py-2 font-medium text-background focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        >
+          Skip to main content
+        </a>
+        {children}
+      </body>
     </html>
   );
 }
