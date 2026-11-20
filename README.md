@@ -53,7 +53,11 @@ You need [Node.js](https://nodejs.org) (which includes npm) installed.
 # 1. Install dependencies (only needed once, or after package.json changes)
 npm install
 
-# 2. Start the development server
+# 2. Set up environment variables (see "Environment variables and secrets" below)
+cp .env.example .env.local   # then fill in your Supabase values
+npm run check:supabase
+
+# 3. Start the development server
 npm run dev
 ```
 
@@ -68,6 +72,7 @@ Then open <http://localhost:3000> in your browser. The page reloads automaticall
 | `npx tsc --noEmit` | Type-checks the code with TypeScript |
 | `npm run build` | Creates an optimised production build |
 | `npm run start` | Runs the production build (after `npm run build`) |
+| `npm run check:supabase` | Checks `.env.local` and the connection to Supabase |
 
 ## Project structure
 
@@ -108,11 +113,24 @@ public/                 Static files served as-is (images, icons)
 
 ## Environment variables and secrets
 
-This project doesn't need any environment variables yet. When it does:
+RepairPassport uses [Supabase](https://supabase.com) for its database and (soon) sign-in. It needs two environment variables:
 
-- put real values in a `.env.local` file, which Git ignores;
+| Variable | What it is |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | The Supabase project URL, e.g. `https://abcdefghijklmnop.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | The project's **publishable** key (`sb_publishable_…`), safe for the browser because Row Level Security protects the data |
+
+To set them up:
+
+1. Copy `.env.example` to `.env.local`.
+2. Fill in both values from your Supabase project (**Connect**, or **Project Settings → API Keys**).
+3. Run `npm run check:supabase` to confirm the connection (it never prints the key).
+
+Rules:
+
+- real values live only in `.env.local`, which Git ignores;
 - never commit API keys, passwords or tokens;
-- document the variable *names* (without real values) in a `.env.example` file.
+- never use the Supabase **secret** key (`sb_secret_…`) in this app's environment variables; the app refuses it.
 
 ## License
 
