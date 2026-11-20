@@ -43,7 +43,15 @@ export function RepairTimeline({ repairs }: { repairs: RepairRecord[] }) {
     >
       <ol className="relative grid gap-8 border-l border-border pl-6">
         {repairs.map((repair) => (
-          <li key={repair.id} className="relative">
+          <li
+            key={repair.id}
+            // The id lets other pages link straight to this repair,
+            // e.g. /appliances/kitchen-microwave#repair-microwave-2026-11.
+            // scroll-mt leaves room for the sticky phone header when the
+            // page scrolls to it.
+            id={repair.id}
+            className="relative scroll-mt-32 lg:scroll-mt-8"
+          >
             {/* The dot on the timeline line */}
             <span
               className="absolute top-1.5 -left-[29px] size-2.5 rounded-full bg-brand ring-4 ring-background"

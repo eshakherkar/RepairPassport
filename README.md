@@ -82,7 +82,7 @@ components/
   app-shell/            App navigation, primary actions, sample data notice
   appliances/           ApplianceCard, ApplianceList, ApplianceIcon, WarrantyBadge,
                         ApplianceDetails, ApplianceWarranties, RepairTimeline, RecordSourceBadge
-  dashboard/            Overview cards: StatCard, OverviewStats
+  dashboard/            StatCard, OverviewStats, RecentRepairs
   ui/                   Reusable building blocks: Badge, ButtonLink, PageHeader, Panel, EmptyState
 lib/
   types.ts              Data shapes: Appliance, RepairRecord, warranties

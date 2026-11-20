@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
-import { ArrowRight, LayoutDashboard } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import {
   ApplianceList,
   ApplianceListSkeleton,
@@ -11,7 +11,7 @@ import {
   OverviewStats,
   OverviewStatsSkeleton,
 } from "@/components/dashboard/overview-stats";
-import { EmptyState } from "@/components/ui/empty-state";
+import { RecentRepairs } from "@/components/dashboard/recent-repairs";
 import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = {
@@ -20,6 +20,9 @@ export const metadata: Metadata = {
 
 /** How many appliance cards the dashboard previews ("View all" shows the rest). */
 const DASHBOARD_APPLIANCE_LIMIT = 3;
+
+/** How many recent repairs the dashboard lists. */
+const DASHBOARD_REPAIR_LIMIT = 5;
 
 export default function DashboardPage() {
   return (
@@ -58,12 +61,7 @@ export default function DashboardPage() {
         </Suspense>
       </section>
 
-      {/* Stage 6 replaces this with recent repair activity. */}
-      <EmptyState
-        icon={LayoutDashboard}
-        title="Recent repair activity is on the way"
-        description="The latest repairs across all your appliances will appear here."
-      />
+      <RecentRepairs limit={DASHBOARD_REPAIR_LIMIT} />
     </>
   );
 }
