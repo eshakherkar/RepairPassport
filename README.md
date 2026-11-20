@@ -64,13 +64,22 @@ Then open <http://localhost:3000> in your browser. The page reloads automaticall
 
 ```text
 app/
-  layout.tsx       Shared page shell: fonts, header, footer, metadata
-  page.tsx         The home page (/): landing page describing the product
-  globals.css      Global styles and colour tokens for Tailwind
+  layout.tsx            Root layout: <html>, fonts, global styles, metadata
+  globals.css           Global styles and colour tokens for Tailwind
+  (marketing)/          Route group for public pages (brackets keep it out of the URL)
+    layout.tsx          Marketing header and footer
+    page.tsx            The landing page (/)
 components/
-  site-header.tsx  Top navigation bar
-  site-footer.tsx  Page footer
-public/            Static files served as-is (images, icons)
+  site-header.tsx       Marketing navigation bar
+  site-footer.tsx       Marketing footer
+lib/
+  types.ts              Data shapes: Appliance, RepairRecord, warranties
+  warranty.ts           Warranty rules: active / expiring soon / expired
+  format.ts             Date and money formatting (locale and currency settings)
+  data/
+    appliances.ts       Data functions the pages call (getAppliances, getDashboardStats…)
+    mock-data.ts        Fictional sample appliances and repairs, used until there is a database
+public/                 Static files served as-is (images, icons)
 ```
 
 ## Environment variables and secrets

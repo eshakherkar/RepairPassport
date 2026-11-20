@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,17 +21,19 @@ export const metadata: Metadata = {
     "A digital maintenance passport for household appliances: upload repair bills, let AI extract the details, and keep a shareable repair history.",
 };
 
+/**
+ * Root layout: wraps every page in the app.
+ * It only sets up <html>, <body>, fonts and global styles. Headers, footers
+ * and navigation live in the route-group layouts, e.g. app/(marketing)/layout.tsx,
+ * so the marketing site and the dashboard can look different.
+ */
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col font-sans">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
-      </body>
+      <body className="flex min-h-full flex-col font-sans">{children}</body>
     </html>
   );
 }
