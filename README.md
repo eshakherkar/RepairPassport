@@ -79,10 +79,13 @@ components/
   site-header.tsx       Marketing navigation bar
   site-footer.tsx       Marketing footer
   app-shell/            App navigation, primary actions, sample data notice
-  ui/                   Reusable building blocks: ButtonLink, PageHeader, EmptyState
+  appliances/           ApplianceCard, ApplianceList, ApplianceIcon, WarrantyBadge
+  dashboard/            Overview cards: StatCard, OverviewStats
+  ui/                   Reusable building blocks: Badge, ButtonLink, PageHeader, EmptyState
 lib/
   types.ts              Data shapes: Appliance, RepairRecord, warranties
-  warranty.ts           Warranty rules: active / expiring soon / expired
+  warranty.ts           Warranty rules: active / expiring soon / expired, appliance cover
+  appliance-categories.ts  Display names for appliance categories
   format.ts             Date and money formatting (locale and currency settings)
   data/
     appliances.ts       Data functions the pages call (getAppliances, getDashboardStats…)

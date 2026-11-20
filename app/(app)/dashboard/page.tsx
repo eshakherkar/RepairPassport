@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { LayoutDashboard } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, LayoutDashboard } from "lucide-react";
+import {
+  ApplianceList,
+  ApplianceListSkeleton,
+} from "@/components/appliances/appliance-list";
 import { PrimaryActions } from "@/components/app-shell/primary-actions";
 import {
   OverviewStats,
@@ -12,6 +17,9 @@ import { PageHeader } from "@/components/ui/page-header";
 export const metadata: Metadata = {
   title: "Dashboard",
 };
+
+/** How many appliance cards the dashboard previews ("View all" shows the rest). */
+const DASHBOARD_APPLIANCE_LIMIT = 3;
 
 export default function DashboardPage() {
   return (
@@ -32,11 +40,29 @@ export default function DashboardPage() {
         </Suspense>
       </section>
 
-      {/* Stages 4–6 replace this with the appliance list and recent repairs. */}
+      <section aria-labelledby="appliances-heading">
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <h2 id="appliances-heading" className="text-lg font-semibold">
+            Your appliances
+          </h2>
+          <Link
+            href="/appliances"
+            className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:text-brand-hover"
+          >
+            View all
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </Link>
+        </div>
+        <Suspense fallback={<ApplianceListSkeleton count={DASHBOARD_APPLIANCE_LIMIT} />}>
+          <ApplianceList limit={DASHBOARD_APPLIANCE_LIMIT} />
+        </Suspense>
+      </section>
+
+      {/* Stage 6 replaces this with recent repair activity. */}
       <EmptyState
         icon={LayoutDashboard}
-        title="More of your overview is on the way"
-        description="Your appliance list and recent repair activity will appear here."
+        title="Recent repair activity is on the way"
+        description="The latest repairs across all your appliances will appear here."
       />
     </>
   );

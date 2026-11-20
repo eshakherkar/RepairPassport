@@ -101,6 +101,28 @@ export type WarrantyEntry = WarrantyInfo & {
   repairId?: string;
 };
 
+/**
+ * The best warranty cover an appliance has today.
+ * - "manufacturer": the whole appliance is covered
+ * - "repair": only a repaired part is covered
+ * - "none": nothing is covered
+ */
+export type ApplianceCoverage =
+  | {
+      kind: "manufacturer" | "repair";
+      status: Exclude<WarrantyStatus, "expired">;
+      expiresOn: ISODate;
+    }
+  | { kind: "none" };
+
+/** An appliance plus the facts its card needs. */
+export type ApplianceSummary = {
+  appliance: Appliance;
+  repairCount: number;
+  lastRepairDate?: ISODate;
+  coverage: ApplianceCoverage;
+};
+
 export type DashboardStats = {
   applianceCount: number;
   repairCount: number;

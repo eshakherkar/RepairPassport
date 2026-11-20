@@ -1,4 +1,9 @@
-import type { ISODate, WarrantyStatus } from "./types";
+import type {
+  ApplianceCoverage,
+  ISODate,
+  WarrantyEntry,
+  WarrantyStatus,
+} from "./types";
 
 /** A warranty ending within this many days counts as "expiring soon". */
 export const EXPIRING_SOON_DAYS = 30;
@@ -39,6 +44,41 @@ export function getWarrantyStatus(
 /** True when the warranty still covers the appliance today. */
 export function isWarrantyValid(expiresOn: ISODate, today: ISODate): boolean {
   return getWarrantyStatus(expiresOn, today) !== "expired";
+}
+
+/**
+ * Works out an appliance's best warranty cover today from all of its
+ * warranties (manufacturer and repairs).
+ *
+ * A valid manufacturer warranty wins, because it covers the whole
+ * appliance. Otherwise the longest-running valid repair warranty is used,
+ * because it only covers a repaired part.
+ */
+export function getApplianceCoverage(
+  warranties: WarrantyEntry[],
+  today: ISODate,
+): ApplianceCoverage {
+  const valid = warranties.filter((w) => isWarrantyValid(w.expiresOn, today));
+  const best =
+    latestExpiring(valid.filter((w) => w.kind === "manufacturer")) ??
+    latestExpiring(valid.filter((w) => w.kind === "repair"));
+
+  if (!best) return { kind: "none" };
+
+  const status = getWarrantyStatus(best.expiresOn, today);
+  return {
+    kind: best.kind,
+    // `valid` only holds unexpired warranties, so this is never "expired".
+    status: status === "expiring-soon" ? "expiring-soon" : "active",
+    expiresOn: best.expiresOn,
+  };
+}
+
+function latestExpiring(warranties: WarrantyEntry[]): WarrantyEntry | undefined {
+  return warranties.reduce<WarrantyEntry | undefined>(
+    (latest, w) => (!latest || w.expiresOn > latest.expiresOn ? w : latest),
+    undefined,
+  );
 }
 
 /** Reads a `YYYY-MM-DD` string as midnight UTC, so day maths ignores time zones. */

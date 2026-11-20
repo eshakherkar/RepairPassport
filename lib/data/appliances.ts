@@ -1,12 +1,13 @@
 import type {
   Appliance,
+  ApplianceSummary,
   DashboardStats,
   ISODate,
   RepairRecord,
   RepairWithAppliance,
   WarrantyEntry,
 } from "../types";
-import { getWarrantyStatus } from "../warranty";
+import { getApplianceCoverage, getWarrantyStatus } from "../warranty";
 import { mockAppliances, mockRepairs } from "./mock-data";
 
 /*
@@ -85,6 +86,34 @@ export async function getWarranties(): Promise<WarrantyEntry[]> {
   );
 
   return [...manufacturer, ...repair];
+}
+
+/**
+ * Every appliance with its repair count, latest repair date and warranty
+ * cover on `today`, sorted by name. Used by appliance cards.
+ */
+export async function getApplianceSummaries(
+  today: ISODate,
+): Promise<ApplianceSummary[]> {
+  const [appliances, warranties] = await Promise.all([
+    getAppliances(),
+    getWarranties(),
+  ]);
+
+  return appliances.map((appliance) => {
+    const repairs = sortNewestFirst(
+      mockRepairs.filter((r) => r.applianceId === appliance.id),
+    );
+    return {
+      appliance,
+      repairCount: repairs.length,
+      lastRepairDate: repairs[0]?.repairDate,
+      coverage: getApplianceCoverage(
+        warranties.filter((w) => w.applianceId === appliance.id),
+        today,
+      ),
+    };
+  });
 }
 
 /**

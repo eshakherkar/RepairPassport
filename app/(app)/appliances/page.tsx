@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
-import { Plus, Refrigerator } from "lucide-react";
+import { Suspense } from "react";
+import { Plus } from "lucide-react";
+import {
+  ApplianceList,
+  ApplianceListSkeleton,
+} from "@/components/appliances/appliance-list";
 import { ButtonLink } from "@/components/ui/button-link";
-import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = {
@@ -22,12 +26,12 @@ export default function AppliancesPage() {
         }
       />
 
-      {/* Stage 4 replaces this with the appliance list. */}
-      <EmptyState
-        icon={Refrigerator}
-        title="Your appliance list is being built"
-        description="Each appliance will appear here with its category, location and warranty status."
-      />
+      <section aria-label="Appliance list">
+        {/* Warranty badges use today's date, so the list loads per visit. */}
+        <Suspense fallback={<ApplianceListSkeleton count={6} />}>
+          <ApplianceList />
+        </Suspense>
+      </section>
     </>
   );
 }
