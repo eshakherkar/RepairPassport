@@ -108,8 +108,31 @@ lib/
   data/
     appliances.ts       Data functions the pages call (getAppliances, getDashboardStats…)
     mock-data.ts        Fictional sample appliances and repairs, used until there is a database
+  supabase/
+    server.ts           Supabase client for server code (reads the user's session cookies)
+    client.ts           Supabase client for browser code
+    env.ts              Reads and checks the Supabase environment variables
+    database.types.ts   GENERATED table types, regenerate after each migration
+    type-checks.ts      Fails the build if lib/types.ts and the database drift apart
 public/                 Static files served as-is (images, icons)
+scripts/
+  check-supabase.mjs    Connection check (npm run check:supabase)
+supabase/
+  migrations/           Database changes, applied in order (see "Database" below)
 ```
+
+## Database
+
+The database is PostgreSQL, hosted by Supabase. Its structure is defined by the SQL files in `supabase/migrations/`, applied in filename order. Never change the database by hand: add a new migration instead, so the history stays in Git.
+
+| Table | Contents |
+| --- | --- |
+| `appliances` | One row per household appliance: name, category, brand, model, serial number, location, purchase date and manufacturer warranty |
+| `repairs` | One row per repair or service: appliance, date, issue, work done, cost (INR), replaced parts, service provider, repair warranty and where the details came from (`manual`, `ai-extracted`, `needs-review`) |
+
+**Security.** Every row has a `user_id` owner. Signed-out visitors have no access. Row Level Security lets signed-in users see, add, change and delete only their own rows, and a repair can only be attached to the same user's appliance.
+
+**After adding a migration:** regenerate `lib/supabase/database.types.ts` (Supabase dashboard → API Docs, or the Supabase CLI / connector) and run `npx tsc --noEmit`.
 
 ## Environment variables and secrets
 
