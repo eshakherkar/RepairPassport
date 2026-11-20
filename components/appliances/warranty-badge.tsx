@@ -1,7 +1,34 @@
 import { ShieldCheck, ShieldOff, TriangleAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/format";
-import type { ApplianceCoverage } from "@/lib/types";
+import type { ApplianceCoverage, WarrantyStatus } from "@/lib/types";
+
+/** The status of one specific warranty: active, ending soon or expired. */
+export function WarrantyStatusBadge({ status }: { status: WarrantyStatus }) {
+  switch (status) {
+    case "active":
+      return (
+        <Badge tone="success">
+          <ShieldCheck className="size-3.5" aria-hidden="true" />
+          Active
+        </Badge>
+      );
+    case "expiring-soon":
+      return (
+        <Badge tone="warning">
+          <TriangleAlert className="size-3.5" aria-hidden="true" />
+          Ends soon
+        </Badge>
+      );
+    case "expired":
+      return (
+        <Badge>
+          <ShieldOff className="size-3.5" aria-hidden="true" />
+          Expired
+        </Badge>
+      );
+  }
+}
 
 /** Shows an appliance's warranty cover at a glance. */
 export function WarrantyBadge({ coverage }: { coverage: ApplianceCoverage }) {

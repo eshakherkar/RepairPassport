@@ -73,15 +73,17 @@ app/
     layout.tsx          App shell: sidebar (desktop), top bar with tabs (phones)
     dashboard/          /dashboard
     appliances/         /appliances and /appliances/new
+      [applianceId]/    /appliances/kitchen-refrigerator etc.: appliance profile and repair timeline
     repairs/upload/     /repairs/upload
 components/
   logo.tsx              RepairPassport wordmark
   site-header.tsx       Marketing navigation bar
   site-footer.tsx       Marketing footer
   app-shell/            App navigation, primary actions, sample data notice
-  appliances/           ApplianceCard, ApplianceList, ApplianceIcon, WarrantyBadge
+  appliances/           ApplianceCard, ApplianceList, ApplianceIcon, WarrantyBadge,
+                        ApplianceDetails, ApplianceWarranties, RepairTimeline, RecordSourceBadge
   dashboard/            Overview cards: StatCard, OverviewStats
-  ui/                   Reusable building blocks: Badge, ButtonLink, PageHeader, EmptyState
+  ui/                   Reusable building blocks: Badge, ButtonLink, PageHeader, Panel, EmptyState
 lib/
   types.ts              Data shapes: Appliance, RepairRecord, warranties
   warranty.ts           Warranty rules: active / expiring soon / expired, appliance cover

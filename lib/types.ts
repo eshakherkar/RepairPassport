@@ -123,6 +123,15 @@ export type ApplianceSummary = {
   coverage: ApplianceCoverage;
 };
 
+/** Everything an appliance's profile page shows. */
+export type ApplianceProfile = {
+  appliance: Appliance;
+  /** Newest first. */
+  repairs: RepairRecord[];
+  /** Manufacturer warranty first, then repair warranties, latest-ending first. */
+  warranties: WarrantyEntry[];
+};
+
 export type DashboardStats = {
   applianceCount: number;
   repairCount: number;

@@ -1,5 +1,6 @@
 import type {
   Appliance,
+  ApplianceProfile,
   ApplianceSummary,
   DashboardStats,
   ISODate,
@@ -114,6 +115,31 @@ export async function getApplianceSummaries(
       ),
     };
   });
+}
+
+/**
+ * Everything for one appliance's profile page, or `undefined` if no
+ * appliance has this ID (the page then shows "Appliance not found").
+ */
+export async function getApplianceProfile(
+  applianceId: string,
+): Promise<ApplianceProfile | undefined> {
+  const appliance = await getApplianceById(applianceId);
+  if (!appliance) return undefined;
+
+  const [repairs, allWarranties] = await Promise.all([
+    getRepairsForAppliance(applianceId),
+    getWarranties(),
+  ]);
+
+  const warranties = allWarranties
+    .filter((w) => w.applianceId === applianceId)
+    .sort((a, b) => {
+      if (a.kind !== b.kind) return a.kind === "manufacturer" ? -1 : 1;
+      return b.expiresOn.localeCompare(a.expiresOn);
+    });
+
+  return { appliance, repairs, warranties };
 }
 
 /**
