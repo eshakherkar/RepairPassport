@@ -4,7 +4,7 @@
 
 RepairPassport gives each household appliance (a fridge, washing machine, dishwasher, oven or boiler) its own digital passport. You upload repair bills and invoices, AI extracts the key details, and the app keeps a clear, chronological repair history that you can share with a QR code.
 
-> **Status:** early development. Accounts and the database work: each signed-in user sees only their own appliances and repairs. You can **add, edit and delete your own appliances** and **log repairs by hand**; bill uploads with AI extraction are not built yet. An empty account can also **load five sample appliances** to try the app.
+> **Status:** early development. Accounts and the database work: each signed-in user sees only their own appliances and repairs. You can **add, edit and delete your own appliances** and **log, edit and delete repairs by hand**; bill uploads with AI extraction are not built yet. An empty account can also **load five sample appliances** to try the app.
 
 ## What works now
 
@@ -13,6 +13,7 @@ RepairPassport gives each household appliance (a fridge, washing machine, dishwa
 - **Add appliance** (`/appliances/new`): a form for the name, type, brand, model, serial number, location, purchase date and manufacturer warranty. Answers are checked on the server; if something needs fixing, the form keeps what you typed and points to the problem.
 - **Edit and delete** (`/appliances/<id>/edit`, via **Edit details** on a profile): change any detail with the same form and checks, or delete the appliance and its repair history after confirming in a pop-up
 - **Log a repair** (`/appliances/<id>/repairs/new`, via **Log a repair** on a profile): the date, problem, work done, cost in rupees, replaced parts, who repaired it and any repair warranty. The repair appears in the appliance's timeline and on the dashboard straight away.
+- **Edit and delete repairs** (**Edit** beside each repair in the timeline): fix any detail or delete the repair after confirming. Repairs read by AI show **Review** instead; saving one marks it as reviewed.
 - **Appliance list** (`/appliances`): every appliance with its location, repair count and warranty status
 - **Appliance profiles** (`/appliances/<id>`): details, all warranties with today's status, and a chronological repair timeline with costs, parts, service providers and repair warranties
 - **Responsive and accessible:** works from 320px phones to desktops in light and dark mode, keyboard-friendly with a skip link and visible focus outlines, colour contrast meets WCAG AA, and respects "reduce motion"
@@ -34,7 +35,7 @@ Appliance repair bills usually end up lost in a drawer or an inbox. When the app
 - [x] **Appliance profiles:** a digital profile for each household appliance (type, brand, model, purchase details). *Viewing, adding, editing and deleting are built.*
 - [ ] **Bill and invoice uploads:** attach repair bills and invoices to the right appliance
 - [ ] **AI extraction:** pull the repair date, issue, cost, replaced parts and warranty details from each uploaded bill, for the user to review
-- [ ] **Repair history:** a chronological timeline of every repair and service per appliance. *The timeline is built, and repairs can be logged by hand; uploads will add them automatically.*
+- [ ] **Repair history:** a chronological timeline of every repair and service per appliance. *The timeline is built, and repairs can be logged, edited and deleted by hand; uploads will add them automatically.*
 - [ ] **QR code sharing:** generate a QR code that shares an appliance's maintenance history
 - [ ] **AI assistant** *(later)*: ask questions about an appliance's history, such as "When was the dishwasher pump last replaced?"
 
@@ -98,6 +99,7 @@ app/
       [applianceId]/    /appliances/<id>: appliance profile and repair timeline
         edit/           /appliances/<id>/edit: edit or delete the appliance
         repairs/new/    /appliances/<id>/repairs/new: log a repair by hand
+        repairs/[repairId]/edit/  edit or delete one repair
     repairs/upload/     /repairs/upload
 components/
   logo.tsx              RepairPassport wordmark
@@ -105,12 +107,12 @@ components/
   site-footer.tsx       Marketing footer
   app-shell/            App navigation, primary actions, signed-in user menu
   appliances/           ApplianceCard, ApplianceList, ApplianceIcon, WarrantyBadge, ApplianceForm,
-                        DeleteApplianceButton, RepairForm,
+                        RepairForm,
                         ApplianceDetails, ApplianceWarranties, RepairTimeline, RecordSourceBadge
   dashboard/            StatCard, OverviewStats, RecentRepairs
   ui/                   Reusable building blocks: Badge, ButtonLink (+ shared button styles),
                         PageHeader, Panel, EmptyState, TextField, TextAreaField, SelectField,
-                        FormMessage, FormSection (+ FormErrors, FormActions)
+                        FormMessage, FormSection (+ FormErrors, FormActions), ConfirmDeleteButton
 lib/
   types.ts              Data shapes: Appliance, RepairRecord, warranties
   warranty.ts           Warranty rules: active / expiring soon / expired, appliance cover
@@ -124,7 +126,7 @@ lib/
     mappers.ts          Database rows → app types (snake_case columns → camelCase)
     sample-data.ts      Five fictional appliances and six repairs for trying the app
     appliance-actions.ts    Add, edit and delete appliance Server Actions
-    repair-actions.ts       "Log a repair" Server Action
+    repair-actions.ts       Log, edit and delete repair Server Actions
     sample-data-actions.ts  "Load sample appliances" Server Action (empty accounts only)
   supabase/
     server.ts           Supabase client for server code (reads the user's session cookies)

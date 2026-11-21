@@ -4,11 +4,12 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ArrowLeft } from "lucide-react";
 import { ApplianceForm } from "@/components/appliances/appliance-form";
-import { DeleteApplianceButton } from "@/components/appliances/delete-appliance-button";
+import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import { PageHeader } from "@/components/ui/page-header";
 import { toApplianceFormValues } from "@/lib/appliance-validation";
 import { deleteAppliance, updateAppliance } from "@/lib/data/appliance-actions";
 import { getApplianceById, getApplianceProfile } from "@/lib/data/appliances";
+import { pluralize } from "@/lib/format";
 
 /*
  * /appliances/[applianceId]/edit: change an appliance's details, or
@@ -79,10 +80,15 @@ async function EditApplianceContent({
             undone.
           </p>
         </div>
-        <DeleteApplianceButton
+        <ConfirmDeleteButton
           deleteAction={deleteAppliance.bind(null, appliance.id)}
-          applianceName={appliance.name}
-          repairCount={repairs.length}
+          label="Delete appliance"
+          title={`Delete ${appliance.name}?`}
+          description={
+            repairs.length > 0
+              ? `This permanently deletes the appliance and its ${pluralize(repairs.length, "repair record")}.`
+              : "This permanently deletes the appliance."
+          }
         />
       </section>
     </>

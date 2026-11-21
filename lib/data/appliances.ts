@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { isApplianceId } from "../appliance-validation";
+import { isRecordId } from "../appliance-validation";
 import { requireUser } from "../auth/session";
 import { createClient } from "../supabase/server";
 import type {
@@ -59,7 +59,7 @@ export async function getAppliances(): Promise<Appliance[]> {
 
 /** One appliance by its ID, or `undefined` if it doesn't exist (or isn't yours). */
 export async function getApplianceById(applianceId: string): Promise<Appliance | undefined> {
-  if (!isApplianceId(applianceId)) return undefined;
+  if (!isRecordId(applianceId)) return undefined;
   return (await fetchAppliances()).find((a) => a.id === applianceId);
 }
 
@@ -79,9 +79,25 @@ export async function getApplianceSummaries(today: ISODate): Promise<ApplianceSu
 export async function getApplianceProfile(
   applianceId: string,
 ): Promise<ApplianceProfile | undefined> {
-  if (!isApplianceId(applianceId)) return undefined;
+  if (!isRecordId(applianceId)) return undefined;
   const [appliances, repairs] = await Promise.all([fetchAppliances(), fetchRepairs()]);
   return buildProfile(appliances, repairs, applianceId);
+}
+
+/**
+ * One repair and its appliance, for the edit-repair page, or `undefined`
+ * if either doesn't exist, isn't yours, or the repair belongs to a
+ * different appliance.
+ */
+export async function getRepairForEdit(
+  applianceId: string,
+  repairId: string,
+): Promise<{ appliance: Appliance; repair: RepairRecord } | undefined> {
+  if (!isRecordId(applianceId) || !isRecordId(repairId)) return undefined;
+  const [appliances, repairs] = await Promise.all([fetchAppliances(), fetchRepairs()]);
+  const appliance = appliances.find((a) => a.id === applianceId);
+  const repair = repairs.find((r) => r.id === repairId && r.applianceId === applianceId);
+  return appliance && repair ? { appliance, repair } : undefined;
 }
 
 /**

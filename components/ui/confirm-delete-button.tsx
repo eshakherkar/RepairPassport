@@ -2,31 +2,38 @@
 
 import { useActionState, useId, useRef } from "react";
 import { Trash2 } from "lucide-react";
-import type { DeleteApplianceState } from "@/lib/data/appliance-actions";
-import { pluralize } from "@/lib/format";
-import { buttonClassName } from "@/components/ui/button-styles";
-import { FormMessage } from "@/components/ui/form-message";
+import { buttonClassName, type ButtonSize } from "./button-styles";
+import { FormMessage } from "./form-message";
 
-type DeleteApplianceButtonProps = {
-  /** deleteAppliance with this appliance's ID already bound (by the page). */
-  deleteAction: (state: DeleteApplianceState) => Promise<DeleteApplianceState>;
-  applianceName: string;
-  repairCount: number;
+type DeleteState = { error?: string };
+
+type ConfirmDeleteButtonProps = {
+  /** The delete Server Action, with the record's ID(s) already bound by the page. */
+  deleteAction: (state: DeleteState) => Promise<DeleteState>;
+  /** Text on both the button and the pop-up's confirm button, e.g. "Delete appliance". */
+  label: string;
+  /** The pop-up's question, e.g. "Delete Kitchen fridge?" */
+  title: string;
+  /** What will be lost. "This can't be undone." is added after it. */
+  description: string;
+  size?: ButtonSize;
 };
 
 /**
- * A "Delete appliance" button that asks for confirmation first.
+ * A red delete button that asks for confirmation first.
  *
  * Uses the browser's built-in <dialog>: showModal() keeps keyboard focus
  * inside it, dims the page behind, and Esc closes it. "Cancel" gets focus
  * first (it's the first button inside), so pressing Enter by accident
  * doesn't delete anything.
  */
-export function DeleteApplianceButton({
+export function ConfirmDeleteButton({
   deleteAction,
-  applianceName,
-  repairCount,
-}: DeleteApplianceButtonProps) {
+  label,
+  title,
+  description,
+  size = "md",
+}: ConfirmDeleteButtonProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const descriptionId = useId();
@@ -37,10 +44,10 @@ export function DeleteApplianceButton({
       <button
         type="button"
         onClick={() => dialogRef.current?.showModal()}
-        className={buttonClassName("danger")}
+        className={buttonClassName("danger", size)}
       >
         <Trash2 className="size-4" aria-hidden="true" />
-        Delete appliance
+        {label}
       </button>
 
       <dialog
@@ -50,13 +57,10 @@ export function DeleteApplianceButton({
         className="m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border border-border bg-background p-6 text-foreground shadow-xl backdrop:bg-black/50"
       >
         <h2 id={titleId} className="text-lg font-semibold text-pretty">
-          Delete {applianceName}?
+          {title}
         </h2>
         <p id={descriptionId} className="mt-2 text-sm text-pretty text-muted">
-          {repairCount > 0
-            ? `This permanently deletes the appliance and its ${pluralize(repairCount, "repair record")}. `
-            : "This permanently deletes the appliance. "}
-          This can’t be undone.
+          {description} This can’t be undone.
         </p>
 
         {state.error && (
@@ -82,7 +86,7 @@ export function DeleteApplianceButton({
             disabled={pending}
             className={buttonClassName("danger", "md", "disabled:opacity-70")}
           >
-            {pending ? "Deleting…" : "Delete appliance"}
+            {pending ? "Deleting…" : label}
           </button>
         </form>
       </dialog>

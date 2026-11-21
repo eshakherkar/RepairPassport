@@ -12,7 +12,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "../auth/session";
 import {
-  isApplianceId,
+  isRecordId,
   parseApplianceForm,
   readApplianceForm,
   type ApplianceFieldErrors,
@@ -78,7 +78,7 @@ export async function updateAppliance(
   const attempt = previous.attempt + 1;
 
   const values = readApplianceForm(formData);
-  if (!isApplianceId(applianceId)) {
+  if (!isRecordId(applianceId)) {
     return { attempt, values, error: "This appliance doesn’t exist any more." };
   }
 
@@ -116,7 +116,7 @@ export type DeleteApplianceState = { error?: string };
  */
 export async function deleteAppliance(applianceId: string): Promise<DeleteApplianceState> {
   await requireUser();
-  if (!isApplianceId(applianceId)) return { error: "This appliance doesn’t exist any more." };
+  if (!isRecordId(applianceId)) return { error: "This appliance doesn’t exist any more." };
 
   const supabase = await createClient();
   const { error } = await supabase.from("appliances").delete().eq("id", applianceId);

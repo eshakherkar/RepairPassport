@@ -50,10 +50,10 @@ export type ParseResult =
   | { ok: true; appliance: NewAppliance }
   | { ok: false; fieldErrors: ApplianceFieldErrors };
 
-/** Appliance IDs are UUIDs; anything else can't exist (and would make Postgres error). */
+/** Appliance and repair IDs are UUIDs; anything else can't exist (and would make Postgres error). */
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export function isApplianceId(value: string): boolean {
+export function isRecordId(value: string): boolean {
   return UUID_PATTERN.test(value);
 }
 

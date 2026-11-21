@@ -1,4 +1,5 @@
-import { Building2, Package, Plus, ShieldCheck, Upload, Wrench } from "lucide-react";
+import Link from "next/link";
+import { Building2, Package, Pencil, Plus, ShieldCheck, Upload, Wrench } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Panel } from "@/components/ui/panel";
@@ -58,7 +59,7 @@ export function RepairTimeline({
           <li
             key={repair.id}
             // The id lets other pages link straight to this repair,
-            // e.g. /appliances/kitchen-microwave#repair-microwave-2026-11.
+            // e.g. /appliances/<appliance id>#<repair id>.
             // scroll-mt leaves room for the sticky phone header when the
             // page scrolls to it.
             id={repair.id}
@@ -75,6 +76,15 @@ export function RepairTimeline({
                 {formatDate(repair.repairDate)}
               </time>
               <RecordSourceBadge source={repair.source} />
+              <Link
+                href={`/appliances/${applianceId}/repairs/${repair.id}/edit`}
+                // The visible text is short; screen readers hear which repair.
+                aria-label={`${repair.source === "needs-review" ? "Review" : "Edit"} repair: ${repair.issue}, ${formatDate(repair.repairDate)}`}
+                className="ml-auto inline-flex items-center gap-1 rounded text-sm font-medium text-brand hover:text-brand-hover"
+              >
+                <Pencil className="size-3.5" aria-hidden="true" />
+                {repair.source === "needs-review" ? "Review" : "Edit"}
+              </Link>
             </div>
 
             <h3 className="mt-1 font-semibold">{repair.issue}</h3>

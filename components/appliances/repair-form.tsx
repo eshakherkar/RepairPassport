@@ -30,21 +30,25 @@ const FIELD_ORDER: (keyof RepairFormValues)[] = [
 ];
 
 type RepairFormProps = {
-  /** createRepair with the appliance's ID already bound (by the page). */
+  /** createRepair or updateRepair with the IDs already bound (by the page). */
   action: (state: RepairFormState, formData: FormData) => Promise<RepairFormState>;
+  /** The saved repair's details, when editing. */
+  initialValues?: RepairFormValues;
+  submitLabel: string;
   /** Where "Cancel" goes: the appliance's profile. */
   cancelHref: string;
 };
 
 /**
- * The "Log a repair" form. It sends everything to the createRepair Server
- * Action, which checks it again, saves it and opens the appliance's
- * profile, where the repair appears in the timeline. If something needs
- * fixing, the form comes back with the user's answers kept.
+ * The form for logging or editing a repair. It sends everything to a
+ * Server Action (createRepair or updateRepair), which checks it again,
+ * saves it and opens the appliance's profile, where the repair appears in
+ * the timeline. If something needs fixing, the form comes back with the
+ * user's answers kept.
  */
-export function RepairForm({ action, cancelHref }: RepairFormProps) {
+export function RepairForm({ action, initialValues, submitLabel, cancelHref }: RepairFormProps) {
   const [state, formAction, pending] = useActionState(action, initialState);
-  const values = state.values;
+  const values = state.values ?? initialValues;
   const errors = state.fieldErrors ?? {};
   const firstError = FIELD_ORDER.find((field) => errors[field]);
 
@@ -144,7 +148,7 @@ export function RepairForm({ action, cancelHref }: RepairFormProps) {
         />
       </FormSection>
 
-      <FormActions cancelHref={cancelHref} submitLabel="Save repair" pending={pending} />
+      <FormActions cancelHref={cancelHref} submitLabel={submitLabel} pending={pending} />
     </form>
   );
 }

@@ -10,7 +10,7 @@
  */
 
 import { isRealDate } from "./appliance-validation";
-import type { ISODate } from "./types";
+import type { ISODate, RepairRecord } from "./types";
 import { daysBetween } from "./warranty";
 
 export const ISSUE_MAX = 200;
@@ -54,6 +54,25 @@ export type NewRepair = {
 export type RepairParseResult =
   | { ok: true; repair: NewRepair }
   | { ok: false; fieldErrors: RepairFieldErrors };
+
+/** A saved repair as form values, to fill in the edit form. */
+export function toRepairFormValues(repair: RepairRecord): RepairFormValues {
+  return {
+    repairDate: repair.repairDate,
+    issue: repair.issue,
+    workDone: repair.workDone,
+    // 4850 → "4850", 4850.5 → "4850.50"
+    cost: Number.isInteger(repair.cost.amount)
+      ? String(repair.cost.amount)
+      : repair.cost.amount.toFixed(2),
+    // One part per line, as the form's hint suggests.
+    replacedParts: repair.replacedParts.join("\n"),
+    serviceProvider: repair.serviceProvider,
+    warrantyExpiresOn: repair.repairWarranty?.expiresOn ?? "",
+    warrantyCoverage: repair.repairWarranty?.coverage ?? "",
+    warrantyProvider: repair.repairWarranty?.provider ?? "",
+  };
+}
 
 /** Reads the form's fields as trimmed strings (missing fields become ""). */
 export function readRepairForm(formData: FormData): RepairFormValues {
