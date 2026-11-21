@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { signUp, type AuthFormState } from "@/lib/auth/actions";
 import { PASSWORD_MIN_LENGTH, PASSWORD_RULES } from "@/lib/auth/validation";
 import { buttonClassName } from "@/components/ui/button-styles";
+import { PasswordField } from "@/components/ui/password-field";
 import { TextField } from "@/components/ui/text-field";
 import { FormMessage } from "@/components/ui/form-message";
 
@@ -26,10 +27,9 @@ export function SignUpForm() {
         defaultValue={state.email}
         error={state.fieldErrors?.email}
       />
-      <TextField
+      <PasswordField
         id="password"
         name="password"
-        type="password"
         label="Password"
         autoComplete="new-password"
         required

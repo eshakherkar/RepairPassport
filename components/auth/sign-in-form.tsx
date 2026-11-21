@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { signIn, type AuthFormState } from "@/lib/auth/actions";
 import { buttonClassName } from "@/components/ui/button-styles";
+import { PasswordField } from "@/components/ui/password-field";
 import { TextField } from "@/components/ui/text-field";
 import { FormMessage } from "@/components/ui/form-message";
 
@@ -36,10 +37,9 @@ export function SignInForm({ next, notice }: { next: string; notice?: string }) 
         defaultValue={state.email}
         error={state.fieldErrors?.email}
       />
-      <TextField
+      <PasswordField
         id="password"
         name="password"
-        type="password"
         label="Password"
         autoComplete="current-password"
         required

@@ -15,8 +15,8 @@ export default function AuthErrorPage() {
       </span>
       <h1 className="mt-4 text-2xl font-semibold tracking-tight">That link didn&apos;t work</h1>
       <p className="mt-2 text-sm text-pretty text-muted">
-        It may have expired, already been used, or been opened in a different
-        browser from the one you signed up in.
+        It may have expired or already been used. If you already confirmed
+        your email, just sign in.
       </p>
       <div className="mt-6 grid gap-2">
         <ButtonLink href="/sign-in">Try signing in</ButtonLink>
