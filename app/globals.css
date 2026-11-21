@@ -17,6 +17,8 @@
   /* Amber, for things that need attention, e.g. a warranty expiring soon. */
   --warning: #b45309;
   --warning-soft: #fffbeb;
+  /* Lets the browser draw its own controls (date pickers, dropdowns) to match. */
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -31,6 +33,8 @@
     --brand-soft: #022c22;
     --warning: #fbbf24;
     --warning-soft: #2a1d05;
+    /* White calendar icons and dark dropdowns on the navy background. */
+    color-scheme: dark;
   }
 }
 

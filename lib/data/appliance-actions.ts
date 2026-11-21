@@ -56,7 +56,11 @@ export async function createAppliance(
     return {
       attempt,
       values,
-      error: "Couldn’t save the appliance. Please check your connection and try again.",
+      error:
+        // Foreign key on user_id: the signed-in account no longer exists.
+        error?.code === "23503"
+          ? "Your sign-in is out of date. Please sign out, then sign in again."
+          : "Couldn’t save the appliance. Please check your connection and try again.",
     };
   }
 
