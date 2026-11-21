@@ -11,27 +11,18 @@ import {
 } from "@/components/appliances/appliance-warranties";
 import { RepairTimeline } from "@/components/appliances/repair-timeline";
 import { ButtonLink } from "@/components/ui/button-link";
-import {
-  getApplianceById,
-  getApplianceProfile,
-  getAppliances,
-} from "@/lib/data/appliances";
+import { getApplianceById, getApplianceProfile } from "@/lib/data/appliances";
 
 /*
- * /appliances/[applianceId], e.g. /appliances/kitchen-refrigerator
+ * /appliances/[applianceId], e.g. /appliances/3f9a0c1e-…
  *
  * The [applianceId] folder name makes this a dynamic route: one page file
  * serves every appliance. This is also the address a QR code will point to.
+ *
+ * Appliances are private to each user, so nothing is pre-built per
+ * appliance (no generateStaticParams): the page frame is pre-built, and
+ * the appliance itself loads per visit for whoever is signed in.
  */
-
-/**
- * Tells Next.js which appliance pages to pre-build. Pages for IDs not in
- * this list are built on their first visit (or show "not found").
- */
-export async function generateStaticParams() {
-  const appliances = await getAppliances();
-  return appliances.map((appliance) => ({ applianceId: appliance.id }));
-}
 
 /** Sets the browser tab title to the appliance's name. */
 export async function generateMetadata({

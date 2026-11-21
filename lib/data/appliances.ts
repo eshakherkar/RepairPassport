@@ -1,3 +1,6 @@
+import { cache } from "react";
+import { requireUser } from "../auth/session";
+import { createClient } from "../supabase/server";
 import type {
   Appliance,
   ApplianceProfile,
@@ -6,162 +9,88 @@ import type {
   ISODate,
   RepairRecord,
   RepairWithAppliance,
-  WarrantyEntry,
 } from "../types";
-import { getApplianceCoverage, getWarrantyStatus } from "../warranty";
-import { mockAppliances, mockRepairs } from "./mock-data";
+import {
+  buildProfile,
+  dashboardStats,
+  recentRepairs,
+  sortByName,
+  summarizeAppliances,
+} from "./derive";
+import { toAppliance, toRepair } from "./mappers";
 
 /*
  * DATA ACCESS LAYER
  * -----------------
  * Every page gets appliance and repair data through these functions.
- * They read fictional sample data for now. When we add a real database,
- * only the inside of these functions changes; pages stay the same.
+ * They read the SIGNED-IN USER'S rows from Supabase.
  *
- * They are `async` because database calls are, so pages are already
- * written the way they will need to be later.
+ * Security, in two layers:
+ *  1. requireUser() checks the session first (signed-out → /sign-in).
+ *  2. Row Level Security in the database only ever returns this user's
+ *     rows, even if a query forgot to filter.
+ *
+ * Each list is fetched once per request (React `cache`), so a page that
+ * shows stats, cards and recent repairs still makes only two queries.
+ * Household data is small, so the calculations run in derive.ts.
  */
 
-/** All appliances, sorted by name. */
+const fetchAppliances = cache(async (): Promise<Appliance[]> => {
+  await requireUser();
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("appliances").select("*");
+  if (error) throw new Error(`Couldn't load appliances (${error.code}).`);
+  return data.map(toAppliance);
+});
+
+const fetchRepairs = cache(async (): Promise<RepairRecord[]> => {
+  await requireUser();
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("repairs").select("*");
+  if (error) throw new Error(`Couldn't load repairs (${error.code}).`);
+  return data.map(toRepair);
+});
+
+/** Appliance IDs are UUIDs; anything else can't exist (and would make Postgres error). */
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** All of the user's appliances, sorted by name. */
 export async function getAppliances(): Promise<Appliance[]> {
-  return [...mockAppliances].sort((a, b) => a.name.localeCompare(b.name));
+  return sortByName(await fetchAppliances());
 }
 
-/** One appliance by its ID, or `undefined` if it doesn't exist. */
-export async function getApplianceById(
-  applianceId: string,
-): Promise<Appliance | undefined> {
-  return mockAppliances.find((appliance) => appliance.id === applianceId);
-}
-
-/** An appliance's repairs, newest first. */
-export async function getRepairsForAppliance(
-  applianceId: string,
-): Promise<RepairRecord[]> {
-  return sortNewestFirst(
-    mockRepairs.filter((repair) => repair.applianceId === applianceId),
-  );
+/** One appliance by its ID, or `undefined` if it doesn't exist (or isn't yours). */
+export async function getApplianceById(applianceId: string): Promise<Appliance | undefined> {
+  if (!UUID_PATTERN.test(applianceId)) return undefined;
+  return (await fetchAppliances()).find((a) => a.id === applianceId);
 }
 
 /** The most recent repairs across all appliances, with appliance details. */
-export async function getRecentRepairs(
-  limit = 5,
-): Promise<RepairWithAppliance[]> {
-  const appliancesById = new Map(mockAppliances.map((a) => [a.id, a]));
-
-  return sortNewestFirst(mockRepairs)
-    .slice(0, limit)
-    .flatMap((repair) => {
-      const appliance = appliancesById.get(repair.applianceId);
-      if (!appliance) return [];
-      const { id, name, category } = appliance;
-      return [{ ...repair, appliance: { id, name, category } }];
-    });
+export async function getRecentRepairs(limit = 5): Promise<RepairWithAppliance[]> {
+  const [appliances, repairs] = await Promise.all([fetchAppliances(), fetchRepairs()]);
+  return recentRepairs(appliances, repairs, limit);
 }
 
-/** Every warranty: manufacturer warranties plus warranties on repairs. */
-export async function getWarranties(): Promise<WarrantyEntry[]> {
-  const manufacturer: WarrantyEntry[] = mockAppliances.flatMap((appliance) =>
-    appliance.manufacturerWarranty
-      ? [
-          {
-            ...appliance.manufacturerWarranty,
-            applianceId: appliance.id,
-            kind: "manufacturer" as const,
-          },
-        ]
-      : [],
-  );
-
-  const repair: WarrantyEntry[] = mockRepairs.flatMap((record) =>
-    record.repairWarranty
-      ? [
-          {
-            ...record.repairWarranty,
-            applianceId: record.applianceId,
-            kind: "repair" as const,
-            repairId: record.id,
-          },
-        ]
-      : [],
-  );
-
-  return [...manufacturer, ...repair];
+/** Each appliance with its repair count, last repair and warranty cover on `today`. */
+export async function getApplianceSummaries(today: ISODate): Promise<ApplianceSummary[]> {
+  const [appliances, repairs] = await Promise.all([fetchAppliances(), fetchRepairs()]);
+  return summarizeAppliances(appliances, repairs, today);
 }
 
-/**
- * Every appliance with its repair count, latest repair date and warranty
- * cover on `today`, sorted by name. Used by appliance cards.
- */
-export async function getApplianceSummaries(
-  today: ISODate,
-): Promise<ApplianceSummary[]> {
-  const [appliances, warranties] = await Promise.all([
-    getAppliances(),
-    getWarranties(),
-  ]);
-
-  return appliances.map((appliance) => {
-    const repairs = sortNewestFirst(
-      mockRepairs.filter((r) => r.applianceId === appliance.id),
-    );
-    return {
-      appliance,
-      repairCount: repairs.length,
-      lastRepairDate: repairs[0]?.repairDate,
-      coverage: getApplianceCoverage(
-        warranties.filter((w) => w.applianceId === appliance.id),
-        today,
-      ),
-    };
-  });
-}
-
-/**
- * Everything for one appliance's profile page, or `undefined` if no
- * appliance has this ID (the page then shows "Appliance not found").
- */
+/** Everything for one appliance's profile page, or `undefined` → "Appliance not found". */
 export async function getApplianceProfile(
   applianceId: string,
 ): Promise<ApplianceProfile | undefined> {
-  const appliance = await getApplianceById(applianceId);
-  if (!appliance) return undefined;
-
-  const [repairs, allWarranties] = await Promise.all([
-    getRepairsForAppliance(applianceId),
-    getWarranties(),
-  ]);
-
-  const warranties = allWarranties
-    .filter((w) => w.applianceId === applianceId)
-    .sort((a, b) => {
-      if (a.kind !== b.kind) return a.kind === "manufacturer" ? -1 : 1;
-      return b.expiresOn.localeCompare(a.expiresOn);
-    });
-
-  return { appliance, repairs, warranties };
+  if (!UUID_PATTERN.test(applianceId)) return undefined;
+  const [appliances, repairs] = await Promise.all([fetchAppliances(), fetchRepairs()]);
+  return buildProfile(appliances, repairs, applianceId);
 }
 
 /**
  * Numbers for the dashboard's overview cards.
- * `today` is passed in (rather than read here) so a page decides what
- * "today" is once, and the result is easy to test.
+ * `today` is passed in so a page decides what "today" is once.
  */
-export async function getDashboardStats(
-  today: ISODate,
-): Promise<DashboardStats> {
-  const warranties = await getWarranties();
-  const statuses = warranties.map((w) => getWarrantyStatus(w.expiresOn, today));
-
-  return {
-    applianceCount: mockAppliances.length,
-    repairCount: mockRepairs.length,
-    activeWarrantyCount: statuses.filter((s) => s !== "expired").length,
-    expiringSoonCount: statuses.filter((s) => s === "expiring-soon").length,
-  };
-}
-
-function sortNewestFirst<T extends { repairDate: ISODate }>(records: T[]): T[] {
-  // ISO dates sort correctly as plain text: "2026-11-08" > "2026-10-05".
-  return [...records].sort((a, b) => b.repairDate.localeCompare(a.repairDate));
+export async function getDashboardStats(today: ISODate): Promise<DashboardStats> {
+  const [appliances, repairs] = await Promise.all([fetchAppliances(), fetchRepairs()]);
+  return dashboardStats(appliances, repairs, today);
 }

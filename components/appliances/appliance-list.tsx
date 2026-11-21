@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getApplianceSummaries } from "@/lib/data/appliances";
 import { toISODate } from "@/lib/warranty";
 import { ApplianceCard } from "./appliance-card";
+import { LoadSampleDataButton } from "./load-sample-data-button";
 
 const gridClasses = "grid gap-4 sm:grid-cols-2 xl:grid-cols-3";
 
@@ -25,12 +26,15 @@ export async function ApplianceList({ limit }: { limit?: number }) {
       <EmptyState
         icon={Refrigerator}
         title="No appliances yet"
-        description="Add your first household appliance to start its maintenance passport."
+        description="Add your first household appliance to start its maintenance passport, or load five sample appliances to explore the app."
         action={
-          <ButtonLink href="/appliances/new">
-            <Plus className="size-4" aria-hidden="true" />
-            Add appliance
-          </ButtonLink>
+          <div className="grid justify-items-center gap-3 sm:flex sm:items-start">
+            <ButtonLink href="/appliances/new">
+              <Plus className="size-4" aria-hidden="true" />
+              Add appliance
+            </ButtonLink>
+            <LoadSampleDataButton />
+          </div>
         }
       />
     );

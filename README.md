@@ -4,7 +4,7 @@
 
 RepairPassport gives each household appliance (a fridge, washing machine, dishwasher, oven or boiler) its own digital passport. You upload repair bills and invoices, AI extracts the key details, and the app keeps a clear, chronological repair history that you can share with a QR code.
 
-> **Status:** early development. Accounts and the database are set up; the dashboard still shows **fictional sample data** until it is connected to the database. There are no uploads yet.
+> **Status:** early development. Accounts and the database work: each signed-in user sees only their own appliances and repairs. Adding appliances, logging repairs and bill uploads are not built yet; an empty account can **load five sample appliances** to try the app.
 
 ## What works now
 
@@ -14,7 +14,7 @@ RepairPassport gives each household appliance (a fridge, washing machine, dishwa
 - **Appliance profiles** (`/appliances/<id>`): details, all warranties with today's status, and a chronological repair timeline with costs, parts, service providers and repair warranties
 - **Responsive and accessible:** works from 320px phones to desktops in light and dark mode, keyboard-friendly with a skip link and visible focus outlines, colour contrast meets WCAG AA, and respects "reduce motion"
 
-"Add appliance" and "Upload repair bill" lead to placeholder pages until those features are built.
+"Add appliance" and "Upload repair bill" lead to placeholder pages until those features are built. Until then, an empty account shows a **Load sample appliances** button, which copies five fictional appliances and six repairs into that account.
 
 ## Why it exists
 
@@ -97,7 +97,7 @@ components/
   logo.tsx              RepairPassport wordmark
   site-header.tsx       Marketing navigation bar
   site-footer.tsx       Marketing footer
-  app-shell/            App navigation, primary actions, sample data notice
+  app-shell/            App navigation, primary actions, signed-in user menu
   appliances/           ApplianceCard, ApplianceList, ApplianceIcon, WarrantyBadge,
                         ApplianceDetails, ApplianceWarranties, RepairTimeline, RecordSourceBadge
   dashboard/            StatCard, OverviewStats, RecentRepairs
@@ -109,8 +109,11 @@ lib/
   appliance-categories.ts  Display names for appliance categories
   format.ts             Date and money formatting (locale and currency settings)
   data/
-    appliances.ts       Data functions the pages call (getAppliances, getDashboardStats…)
-    mock-data.ts        Fictional sample appliances and repairs, used until there is a database
+    appliances.ts       Data functions the pages call; read the signed-in user's rows from Supabase
+    derive.ts           Pure calculations: stats, appliance cards, profiles, recent repairs
+    mappers.ts          Database rows → app types (snake_case columns → camelCase)
+    sample-data.ts      Five fictional appliances and six repairs for trying the app
+    sample-data-actions.ts  "Load sample appliances" Server Action (empty accounts only)
   supabase/
     server.ts           Supabase client for server code (reads the user's session cookies)
     client.ts           Supabase client for browser code

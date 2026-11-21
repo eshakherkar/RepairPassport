@@ -3,7 +3,6 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { AppNav } from "@/components/app-shell/app-nav";
 import { AppNavList } from "@/components/app-shell/app-nav-list";
-import { SampleDataNotice } from "@/components/app-shell/sample-data-notice";
 import { UserMenu, UserMenuSkeleton } from "@/components/app-shell/user-menu";
 import { Logo } from "@/components/logo";
 
@@ -62,7 +61,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
         <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
           <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
-            <SampleDataNotice />
             {children}
           </div>
         </main>

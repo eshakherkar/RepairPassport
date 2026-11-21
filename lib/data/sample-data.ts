@@ -4,15 +4,17 @@ import { DEFAULT_CURRENCY } from "../format";
 /*
  * FICTIONAL SAMPLE DATA
  * ---------------------
- * Used while the dashboard is being built, before there is a database.
+ * Five example appliances with six repairs, which a signed-in user with an
+ * empty account can load into their own account ("Load sample appliances",
+ * see sample-data-actions.ts) to try the app.
  * Brands, model numbers, serial numbers and service companies are made up.
  * No real people or real personal data appear here.
  *
- * Only `lib/data/appliances.ts` should import this file. Pages call the
- * functions there instead, so swapping in a database later changes one file.
+ * The `id` values below are only labels that link each repair to its
+ * appliance while loading; the database gives every row a real ID.
  */
 
-export const mockAppliances: Appliance[] = [
+export const sampleAppliances: Appliance[] = [
   {
     id: "kitchen-refrigerator",
     name: "Kitchen refrigerator",
@@ -88,7 +90,7 @@ export const mockAppliances: Appliance[] = [
   },
 ];
 
-export const mockRepairs: RepairRecord[] = [
+export const sampleRepairs: RepairRecord[] = [
   {
     id: "repair-fridge-2024-06",
     applianceId: "kitchen-refrigerator",

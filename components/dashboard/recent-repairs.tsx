@@ -12,8 +12,8 @@ import { formatDate, formatMoney } from "@/lib/format";
  * The latest repairs across all appliances, newest first.
  * Each row links to that repair in the appliance's timeline.
  *
- * Nothing here depends on today's date, so unlike the overview cards this
- * can be pre-built: no `connection()` or <Suspense> needed.
+ * The repairs belong to the signed-in user and come from the database,
+ * so this loads per visit: wrap it in <Suspense fallback={<RecentRepairsSkeleton />}>.
  */
 export async function RecentRepairs({ limit = 5 }: { limit?: number }) {
   const repairs = await getRecentRepairs(limit);
@@ -74,6 +74,26 @@ export async function RecentRepairs({ limit = 5 }: { limit?: number }) {
               className="hidden size-4 shrink-0 text-muted sm:block"
               aria-hidden="true"
             />
+          </li>
+        ))}
+      </ul>
+    </Panel>
+  );
+}
+
+/** Placeholder rows shown while recent repairs load. */
+export function RecentRepairsSkeleton() {
+  return (
+    <Panel title="Recent repair activity">
+      <ul className="-my-3 divide-y divide-border motion-safe:animate-pulse" aria-hidden="true">
+        {[0, 1, 2].map((i) => (
+          <li key={i} className="flex items-center gap-4 py-3">
+            <div className="size-10 shrink-0 rounded-lg bg-border" />
+            <div className="flex-1 space-y-2">
+              <div className="h-4 w-1/3 rounded bg-border" />
+              <div className="h-3 w-1/2 rounded bg-border" />
+            </div>
+            <div className="h-4 w-14 rounded bg-border" />
           </li>
         ))}
       </ul>

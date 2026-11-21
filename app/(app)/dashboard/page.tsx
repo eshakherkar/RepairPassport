@@ -11,7 +11,10 @@ import {
   OverviewStats,
   OverviewStatsSkeleton,
 } from "@/components/dashboard/overview-stats";
-import { RecentRepairs } from "@/components/dashboard/recent-repairs";
+import {
+  RecentRepairs,
+  RecentRepairsSkeleton,
+} from "@/components/dashboard/recent-repairs";
 import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = {
@@ -61,7 +64,10 @@ export default function DashboardPage() {
         </Suspense>
       </section>
 
-      <RecentRepairs limit={DASHBOARD_REPAIR_LIMIT} />
+      {/* Your repairs come from the database per visit. */}
+      <Suspense fallback={<RecentRepairsSkeleton />}>
+        <RecentRepairs limit={DASHBOARD_REPAIR_LIMIT} />
+      </Suspense>
     </>
   );
 }
