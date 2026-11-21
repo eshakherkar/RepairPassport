@@ -49,6 +49,8 @@ Appliance repair bills usually end up lost in a drawer or an inbox. When the app
 | [Tailwind CSS](https://tailwindcss.com) | Styling with small utility classes |
 | [ESLint](https://eslint.org) | Checking code for common problems |
 | [Lucide React](https://lucide.dev) | Icons |
+| [Supabase](https://supabase.com) | Database, sign-in and Row Level Security |
+| [Vitest](https://vitest.dev) | Automated tests |
 
 ## Getting started
 
@@ -73,6 +75,7 @@ Then open <http://localhost:3000> in your browser. The page reloads automaticall
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Starts the development server with live reload |
+| `npm test` | Runs the automated tests ([Vitest](https://vitest.dev)): form rules, money, dates, warranties and sign-in safety |
 | `npm run lint` | Checks the code with ESLint |
 | `npx tsc --noEmit` | Type-checks the code with TypeScript |
 | `npm run build` | Creates an optimised production build |
