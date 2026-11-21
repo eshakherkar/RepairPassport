@@ -10,6 +10,7 @@ import {
   ApplianceWarrantiesSkeleton,
 } from "@/components/appliances/appliance-warranties";
 import { RepairTimeline } from "@/components/appliances/repair-timeline";
+import { SharePanel } from "@/components/appliances/share-panel";
 import { ButtonLink } from "@/components/ui/button-link";
 import { getApplianceById, getApplianceProfile } from "@/lib/data/appliances";
 
@@ -88,7 +89,7 @@ async function ApplianceProfileContent({
             <Pencil className="size-4" aria-hidden="true" />
             Edit details
           </ButtonLink>
-          <ButtonLink href="/repairs/upload" variant="secondary">
+          <ButtonLink href={`/repairs/upload?appliance=${appliance.id}`} variant="secondary">
             <Upload className="size-4" aria-hidden="true" />
             Upload repair bill
           </ButtonLink>
@@ -106,6 +107,7 @@ async function ApplianceProfileContent({
           <Suspense fallback={<ApplianceWarrantiesSkeleton />}>
             <ApplianceWarranties warranties={warranties} />
           </Suspense>
+          <SharePanel appliance={appliance} />
         </div>
         <div className="lg:col-span-2">
           <RepairTimeline applianceId={appliance.id} repairs={repairs} />

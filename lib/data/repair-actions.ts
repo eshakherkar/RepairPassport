@@ -13,6 +13,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { isRecordId } from "../appliance-validation";
 import { requireUser } from "../auth/session";
+import { isOwnBillPath } from "../bill";
 import { DEFAULT_CURRENCY } from "../format";
 import {
   parseRepairForm,
@@ -42,27 +43,34 @@ const FOREIGN_KEY_VIOLATION = "23503";
 const GONE = "This repair or its appliance doesn’t exist any more.";
 
 /**
- * Saves a repair typed in by hand, then opens the appliance's profile.
- * The appliance ID is bound by the page (createRepair.bind(null, id)).
+ * Saves a repair, then opens the appliance's profile. The appliance ID and
+ * any uploaded bill are bound by the page (createRepair.bind(null, id, bill)).
+ * A bill's details read by AI are saved as "Read by AI": the user has just
+ * checked them in the form.
  */
 export async function createRepair(
   applianceId: string,
+  bill: { path: string; readByAI: boolean } | null,
   previous: RepairFormState,
   formData: FormData,
 ): Promise<RepairFormState> {
-  await requireUser();
+  const user = await requireUser();
   const attempt = previous.attempt + 1;
 
   const values = readRepairForm(formData);
   if (!isRecordId(applianceId)) return { attempt, values, error: GONE };
+  if (bill && !isOwnBillPath(bill.path, user.id)) return { attempt, values, error: GONE };
 
   const result = parseRepairForm(values, toISODate(new Date()));
   if (!result.ok) return { attempt, values, fieldErrors: result.fieldErrors };
 
   const supabase = await createClient();
-  const { error } = await supabase
-    .from("repairs")
-    .insert({ ...toRow(result.repair), appliance_id: applianceId, source: "manual" });
+  const { error } = await supabase.from("repairs").insert({
+    ...toRow(result.repair),
+    appliance_id: applianceId,
+    bill_path: bill?.path ?? null,
+    source: bill?.readByAI ? "ai-extracted" : "manual",
+  });
 
   if (error) {
     return {

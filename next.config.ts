@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
   // it from covering the sidebar's "Back to website" link.
   devIndicators: { position: "bottom-right" },
   cacheComponents: true,
+  experimental: {
+    // Bill uploads (up to 4 MB) go through a Server Action; Vercel's cap is 4.5 MB.
+    serverActions: { bodySizeLimit: "4.5mb" },
+  },
   partialPrefetching: true,
   turbopack: {
     rules: {

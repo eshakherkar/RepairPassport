@@ -1,5 +1,14 @@
 import Link from "next/link";
-import { Building2, Package, Pencil, Plus, ShieldCheck, Upload, Wrench } from "lucide-react";
+import {
+  Building2,
+  FileText,
+  Package,
+  Pencil,
+  Plus,
+  ShieldCheck,
+  Upload,
+  Wrench,
+} from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Panel } from "@/components/ui/panel";
@@ -10,13 +19,16 @@ import { RecordSourceBadge } from "./record-source-badge";
 /**
  * An appliance's repairs in date order, newest at the top, with what was
  * wrong, what was done, the cost, parts and any repair warranty.
+ * `readOnly` (the public share page) hides editing, bills and buttons.
  */
 export function RepairTimeline({
   applianceId,
   repairs,
+  readOnly = false,
 }: {
   applianceId: string;
   repairs: RepairRecord[];
+  readOnly?: boolean;
 }) {
   if (repairs.length === 0) {
     return (
@@ -24,18 +36,24 @@ export function RepairTimeline({
         <EmptyState
           icon={Wrench}
           title="No repairs recorded yet"
-          description="When this appliance is repaired or serviced, log the repair to start its history."
+          description={
+            readOnly
+              ? "This appliance has no repairs on record."
+              : "When this appliance is repaired or serviced, log the repair or upload its bill to start its history."
+          }
           action={
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <ButtonLink href={`/appliances/${applianceId}/repairs/new`}>
-                <Plus className="size-4" aria-hidden="true" />
-                Log a repair
-              </ButtonLink>
-              <ButtonLink href="/repairs/upload" variant="secondary">
-                <Upload className="size-4" aria-hidden="true" />
-                Upload repair bill
-              </ButtonLink>
-            </div>
+            !readOnly && (
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <ButtonLink href={`/appliances/${applianceId}/repairs/new`}>
+                  <Plus className="size-4" aria-hidden="true" />
+                  Log a repair
+                </ButtonLink>
+                <ButtonLink href={`/repairs/upload?appliance=${applianceId}`} variant="secondary">
+                  <Upload className="size-4" aria-hidden="true" />
+                  Upload repair bill
+                </ButtonLink>
+              </div>
+            )
           }
         />
       </Panel>
@@ -76,15 +94,31 @@ export function RepairTimeline({
                 {formatDate(repair.repairDate)}
               </time>
               <RecordSourceBadge source={repair.source} />
-              <Link
-                href={`/appliances/${applianceId}/repairs/${repair.id}/edit`}
-                // The visible text is short; screen readers hear which repair.
-                aria-label={`${repair.source === "needs-review" ? "Review" : "Edit"} repair: ${repair.issue}, ${formatDate(repair.repairDate)}`}
-                className="ml-auto inline-flex items-center gap-1 rounded text-sm font-medium text-brand hover:text-brand-hover"
-              >
-                <Pencil className="size-3.5" aria-hidden="true" />
-                {repair.source === "needs-review" ? "Review" : "Edit"}
-              </Link>
+              {!readOnly && (
+                <div className="ml-auto flex items-center gap-4">
+                  {repair.billPath && (
+                    <a
+                      href={`/appliances/${applianceId}/repairs/${repair.id}/bill`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`View bill (opens in a new tab): ${repair.issue}, ${formatDate(repair.repairDate)}`}
+                      className="inline-flex items-center gap-1 rounded text-sm font-medium text-brand hover:text-brand-hover"
+                    >
+                      <FileText className="size-3.5" aria-hidden="true" />
+                      Bill
+                    </a>
+                  )}
+                  <Link
+                    href={`/appliances/${applianceId}/repairs/${repair.id}/edit`}
+                    // The visible text is short; screen readers hear which repair.
+                    aria-label={`${repair.source === "needs-review" ? "Review" : "Edit"} repair: ${repair.issue}, ${formatDate(repair.repairDate)}`}
+                    className="inline-flex items-center gap-1 rounded text-sm font-medium text-brand hover:text-brand-hover"
+                  >
+                    <Pencil className="size-3.5" aria-hidden="true" />
+                    {repair.source === "needs-review" ? "Review" : "Edit"}
+                  </Link>
+                </div>
+              )}
             </div>
 
             <h3 className="mt-1 font-semibold">{repair.issue}</h3>
@@ -112,9 +146,7 @@ export function RepairTimeline({
                   Parts replaced
                 </dt>
                 <dd className="font-medium">
-                  {repair.replacedParts.length === 0
-                    ? "None"
-                    : repair.replacedParts.join(", ")}
+                  {repair.replacedParts.length === 0 ? "None" : repair.replacedParts.join(", ")}
                 </dd>
               </div>
               <div>

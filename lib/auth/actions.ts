@@ -8,8 +8,8 @@
  */
 
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getSiteOrigin } from "@/lib/site-origin";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "./session";
 import { safeNextPath } from "./routes";
@@ -82,7 +82,7 @@ export async function signUp(
     password,
     options: {
       // Where the link in the confirmation email leads.
-      emailRedirectTo: `${await getOrigin()}/auth/confirm?next=/dashboard`,
+      emailRedirectTo: `${await getSiteOrigin()}/auth/confirm?next=/dashboard`,
     },
   });
 
@@ -134,7 +134,7 @@ export async function requestPasswordReset(
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${await getOrigin()}/auth/confirm?next=/reset-password`,
+    redirectTo: `${await getSiteOrigin()}/auth/confirm?next=/reset-password`,
   });
   if (error?.code === "over_email_send_rate_limit") {
     return { email, error: "Too many emails were sent recently. Please wait a while and try again." };
@@ -174,14 +174,4 @@ export async function signOut() {
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
   redirect("/sign-in?signed-out=1");
-}
-
-/** This site's address, e.g. http://localhost:3000, from the request. */
-async function getOrigin() {
-  const h = await headers();
-  const origin = h.get("origin");
-  if (origin) return origin;
-  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
-  const protocol = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-  return `${protocol}://${host}`;
 }

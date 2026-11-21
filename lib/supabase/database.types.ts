@@ -33,6 +33,7 @@ export type Database = {
           name: string
           purchase_date: string
           serial_number: string | null
+          share_token: string | null
           updated_at: string
           user_id: string
         }
@@ -49,6 +50,7 @@ export type Database = {
           name: string
           purchase_date: string
           serial_number?: string | null
+          share_token?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -65,6 +67,7 @@ export type Database = {
           name?: string
           purchase_date?: string
           serial_number?: string | null
+          share_token?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -73,6 +76,7 @@ export type Database = {
       repairs: {
         Row: {
           appliance_id: string
+          bill_path: string | null
           cost_amount: number
           cost_currency: string
           created_at: string
@@ -91,6 +95,7 @@ export type Database = {
         }
         Insert: {
           appliance_id: string
+          bill_path?: string | null
           cost_amount?: number
           cost_currency?: string
           created_at?: string
@@ -109,6 +114,7 @@ export type Database = {
         }
         Update: {
           appliance_id?: string
+          bill_path?: string | null
           cost_amount?: number
           cost_currency?: string
           created_at?: string
@@ -140,7 +146,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_shared_appliance: { Args: { p_token: string }; Returns: Json }
     }
     Enums: {
       appliance_category:

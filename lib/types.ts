@@ -57,6 +57,8 @@ export type Appliance = {
   purchaseDate: ISODate;
   /** The manufacturer's original warranty, if known. */
   manufacturerWarranty?: WarrantyInfo;
+  /** Set when the owner has shared a read-only link (/share/<token>). */
+  shareToken?: string;
 };
 
 /**
@@ -83,6 +85,8 @@ export type RepairRecord = {
   /** Warranty on this repair or its parts, if the bill mentions one. */
   repairWarranty?: WarrantyInfo;
   source: RecordSource;
+  /** The uploaded bill in Supabase Storage ("<user id>/<file>"), if any. */
+  billPath?: string;
 };
 
 /** A repair record together with the appliance it belongs to. */

@@ -35,6 +35,7 @@ export function toAppliance(row: ApplianceRow): Appliance {
       row.manufacturer_warranty_coverage,
       row.manufacturer_warranty_provider,
     ),
+    shareToken: row.share_token ?? undefined,
   };
 }
 
@@ -58,5 +59,6 @@ export function toRepair(row: RepairRow): RepairRecord {
       row.repair_warranty_provider,
     ),
     source: row.source,
+    billPath: row.bill_path ?? undefined,
   };
 }

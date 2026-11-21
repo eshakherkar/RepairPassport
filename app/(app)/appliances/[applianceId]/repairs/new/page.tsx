@@ -58,7 +58,7 @@ async function NewRepairContent({
       <div className="rounded-xl border border-border bg-background p-5 sm:p-6">
         <RepairForm
           // The ID is bound here on the server, so the browser can't swap it.
-          action={createRepair.bind(null, appliance.id)}
+          action={createRepair.bind(null, appliance.id, null)}
           submitLabel="Save repair"
           cancelHref={profileHref}
         />
