@@ -5,7 +5,7 @@ import { signUp, type AuthFormState } from "@/lib/auth/actions";
 import { PASSWORD_MIN_LENGTH, PASSWORD_RULES } from "@/lib/auth/validation";
 import { buttonClassName } from "@/components/ui/button-styles";
 import { TextField } from "@/components/ui/text-field";
-import { FormMessage } from "./form-message";
+import { FormMessage } from "@/components/ui/form-message";
 
 const initialState: AuthFormState = {};
 

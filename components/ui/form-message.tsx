@@ -1,6 +1,6 @@
 import { CircleCheck, TriangleAlert } from "lucide-react";
 
-/** A message at the top of an auth form: an error, or a friendly notice. */
+/** A message at the top of a form: an error, or a friendly notice. */
 export function FormMessage({
   tone,
   children,

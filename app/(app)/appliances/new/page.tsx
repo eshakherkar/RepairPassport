@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
-import { Refrigerator } from "lucide-react";
-import { ButtonLink } from "@/components/ui/button-link";
-import { EmptyState } from "@/components/ui/empty-state";
+import { ApplianceForm } from "@/components/appliances/appliance-form";
 import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = {
   title: "Add appliance",
 };
 
+/**
+ * /appliances/new: the "Add appliance" form.
+ * Saving happens in the createAppliance Server Action, which checks the
+ * user is signed in and re-checks every answer on the server.
+ */
 export default function AddAppliancePage() {
   return (
     <>
@@ -15,18 +18,9 @@ export default function AddAppliancePage() {
         title="Add an appliance"
         description="Create a maintenance passport for a household appliance."
       />
-
-      {/* A later milestone adds the form here. */}
-      <EmptyState
-        icon={Refrigerator}
-        title="The add appliance form is coming soon"
-        description="You'll be able to enter the appliance type, brand, model, location, purchase date and warranty details."
-        action={
-          <ButtonLink href="/dashboard" variant="secondary">
-            Back to dashboard
-          </ButtonLink>
-        }
-      />
+      <div className="rounded-xl border border-border bg-background p-5 sm:p-6">
+        <ApplianceForm />
+      </div>
     </>
   );
 }

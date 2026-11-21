@@ -4,17 +4,18 @@
 
 RepairPassport gives each household appliance (a fridge, washing machine, dishwasher, oven or boiler) its own digital passport. You upload repair bills and invoices, AI extracts the key details, and the app keeps a clear, chronological repair history that you can share with a QR code.
 
-> **Status:** early development. Accounts and the database work: each signed-in user sees only their own appliances and repairs. Adding appliances, logging repairs and bill uploads are not built yet; an empty account can **load five sample appliances** to try the app.
+> **Status:** early development. Accounts and the database work: each signed-in user sees only their own appliances and repairs. You can **add your own appliances**; editing, logging repairs and bill uploads are not built yet. An empty account can also **load five sample appliances** to try the app.
 
 ## What works now
 
 - **Accounts** (`/sign-up`, `/sign-in`): email and password, with email confirmation; passwords need 8+ characters including a letter and a number. The dashboard pages require signing in.
 - **Dashboard** (`/dashboard`): overview cards (appliances, repair records, active warranties with an "expiring soon" warning), an appliance preview and recent repair activity
+- **Add appliance** (`/appliances/new`): a form for the name, type, brand, model, serial number, location, purchase date and manufacturer warranty. Answers are checked on the server; if something needs fixing, the form keeps what you typed and points to the problem.
 - **Appliance list** (`/appliances`): every appliance with its location, repair count and warranty status
 - **Appliance profiles** (`/appliances/<id>`): details, all warranties with today's status, and a chronological repair timeline with costs, parts, service providers and repair warranties
 - **Responsive and accessible:** works from 320px phones to desktops in light and dark mode, keyboard-friendly with a skip link and visible focus outlines, colour contrast meets WCAG AA, and respects "reduce motion"
 
-"Add appliance" and "Upload repair bill" lead to placeholder pages until those features are built. Until then, an empty account shows a **Load sample appliances** button, which copies five fictional appliances and six repairs into that account.
+"Upload repair bill" leads to a placeholder page until that feature is built. An empty account also shows a **Load sample appliances** button, which copies five fictional appliances and six repairs into that account.
 
 ## Why it exists
 
@@ -28,7 +29,7 @@ Appliance repair bills usually end up lost in a drawer or an inbox. When the app
 
 ## Planned features
 
-- [ ] **Appliance profiles:** a digital profile for each household appliance (type, brand, model, purchase details). *Viewing is built; adding and editing are not.*
+- [ ] **Appliance profiles:** a digital profile for each household appliance (type, brand, model, purchase details). *Viewing and adding are built; editing is not.*
 - [ ] **Bill and invoice uploads:** attach repair bills and invoices to the right appliance
 - [ ] **AI extraction:** pull the repair date, issue, cost, replaced parts and warranty details from each uploaded bill, for the user to review
 - [ ] **Repair history:** a chronological timeline of every repair and service per appliance. *The timeline is built; it shows sample data until uploads exist.*
@@ -90,29 +91,32 @@ app/
     layout.tsx          App shell: sidebar (desktop), top bar with tabs (phones)
     error.tsx           "Something went wrong" page with Try again
     dashboard/          /dashboard
-    appliances/         /appliances and /appliances/new
-      [applianceId]/    /appliances/kitchen-refrigerator etc.: appliance profile and repair timeline
+    appliances/         /appliances
+      new/              /appliances/new: the Add appliance form
+      [applianceId]/    /appliances/<id>: appliance profile and repair timeline
     repairs/upload/     /repairs/upload
 components/
   logo.tsx              RepairPassport wordmark
   site-header.tsx       Marketing navigation bar
   site-footer.tsx       Marketing footer
   app-shell/            App navigation, primary actions, signed-in user menu
-  appliances/           ApplianceCard, ApplianceList, ApplianceIcon, WarrantyBadge,
+  appliances/           ApplianceCard, ApplianceList, ApplianceIcon, WarrantyBadge, ApplianceForm,
                         ApplianceDetails, ApplianceWarranties, RepairTimeline, RecordSourceBadge
   dashboard/            StatCard, OverviewStats, RecentRepairs
   ui/                   Reusable building blocks: Badge, ButtonLink (+ shared button styles),
-                        PageHeader, Panel, EmptyState
+                        PageHeader, Panel, EmptyState, TextField, SelectField, FormMessage
 lib/
   types.ts              Data shapes: Appliance, RepairRecord, warranties
   warranty.ts           Warranty rules: active / expiring soon / expired, appliance cover
   appliance-categories.ts  Display names for appliance categories
+  appliance-validation.ts  Rules for the Add appliance form (shared by the form and the server)
   format.ts             Date and money formatting (locale and currency settings)
   data/
     appliances.ts       Data functions the pages call; read the signed-in user's rows from Supabase
     derive.ts           Pure calculations: stats, appliance cards, profiles, recent repairs
     mappers.ts          Database rows → app types (snake_case columns → camelCase)
     sample-data.ts      Five fictional appliances and six repairs for trying the app
+    appliance-actions.ts    "Add appliance" Server Action: checks, saves, opens the new profile
     sample-data-actions.ts  "Load sample appliances" Server Action (empty accounts only)
   supabase/
     server.ts           Supabase client for server code (reads the user's session cookies)
@@ -153,7 +157,7 @@ The database is PostgreSQL, hosted by Supabase. Its structure is defined by the 
 
 ## Environment variables and secrets
 
-RepairPassport uses [Supabase](https://supabase.com) for its database and (soon) sign-in. It needs two environment variables:
+RepairPassport uses [Supabase](https://supabase.com) for its database and sign-in. It needs two environment variables:
 
 | Variable | What it is |
 | --- | --- |

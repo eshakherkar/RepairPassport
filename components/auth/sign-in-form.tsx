@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { signIn, type AuthFormState } from "@/lib/auth/actions";
 import { buttonClassName } from "@/components/ui/button-styles";
 import { TextField } from "@/components/ui/text-field";
-import { FormMessage } from "./form-message";
+import { FormMessage } from "@/components/ui/form-message";
 
 const initialState: AuthFormState = {};
 
