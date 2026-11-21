@@ -19,7 +19,10 @@ export default function CheckEmailPage() {
         account and you&apos;ll be signed in.
       </p>
       <ul className="mt-6 grid gap-2 rounded-lg bg-surface p-4 text-left text-sm text-muted">
-        <li>You can open the link on any device, such as your phone.</li>
+        <li>
+          <strong className="text-foreground">Open the link on this device, in this browser.</strong>{" "}
+          It finishes signing you in here.
+        </li>
         <li>It can take a few minutes to arrive. Check your spam folder too.</li>
         <li>
           <strong className="text-foreground">Already have an account with this email?</strong> No new

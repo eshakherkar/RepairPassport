@@ -14,8 +14,8 @@ export function ForgotPasswordForm() {
   if (state.sent) {
     return (
       <FormMessage tone="success">
-        If {state.email} has an account, a reset link is on its way. Open it on any device to
-        choose a new password. Check your spam folder too.
+        If {state.email} has an account, a reset link is on its way. Open it on this device, in
+        this browser, to choose a new password. Check your spam folder too.
       </FormMessage>
     );
   }

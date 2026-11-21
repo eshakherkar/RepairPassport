@@ -8,7 +8,7 @@ RepairPassport gives each household appliance (a fridge, washing machine, dishwa
 
 ## What works now
 
-- **Accounts** (`/sign-up`, `/sign-in`): email and password, with email confirmation; passwords need 8+ characters including a letter and a number. **Forgot password?** on the sign-in page emails a link to choose a new one (`/forgot-password` → `/reset-password`). The dashboard pages require signing in.
+- **Accounts** (`/sign-up`, `/sign-in`): email and password; new accounts are signed in straight away (Supabase's "Confirm email" setting is off, so judges can try the app without an inbox); passwords need 8+ characters including a letter and a number. **Forgot password?** on the sign-in page emails a link to choose a new one (`/forgot-password` → `/reset-password`). The dashboard pages require signing in.
 - **Dashboard** (`/dashboard`): overview cards (appliances, repair records, active warranties with an "expiring soon" warning), an appliance preview and recent repair activity
 - **Add appliance** (`/appliances/new`): a form for the name, type, brand, model, serial number, location, purchase date and manufacturer warranty. Answers are checked on the server; if something needs fixing, the form keeps what you typed and points to the problem.
 - **Edit and delete** (`/appliances/<id>/edit`, via **Edit details** on a profile): change any detail with the same form and checks, or delete the appliance and its repair history after confirming in a pop-up
@@ -153,7 +153,7 @@ Sign-in uses [Supabase Auth](https://supabase.com/docs/guides/auth) with email a
 - `lib/auth/actions.ts` holds the sign-up, sign-in and sign-out Server Actions.
 - After sign-in, users only return to pages on this site (`safeNextPath`), never to outside links.
 
-**Supabase settings** (Dashboard → Authentication → URL Configuration): Site URL `http://localhost:3000`, and add `http://localhost:3000/**` to Redirect URLs so confirmation links can return to `/auth/confirm`.
+**Supabase settings** (Dashboard → Authentication → URL Configuration): Site URL `http://localhost:3000`, and add `http://localhost:3000/**` to Redirect URLs so password-reset links can return to `/auth/confirm`. For the live site, use `https://repairpassport-esha.vercel.app` and add `https://repairpassport-esha.vercel.app/**`. Email links only work in the browser that asked for them, because Supabase's built-in email service doesn't allow changing the email templates; a custom SMTP sender would lift that.
 
 ## Database
 

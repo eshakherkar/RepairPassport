@@ -77,7 +77,7 @@ export async function signUp(
   if (fieldErrors.email || fieldErrors.password) return { email, fieldErrors };
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -90,6 +90,11 @@ export async function signUp(
     switch (error.code) {
       case "weak_password":
         return { email, fieldErrors: { password: "Choose a stronger password." } };
+      case "user_already_exists":
+        return {
+          email,
+          fieldErrors: { email: "This email already has an account. Sign in instead." },
+        };
       case "email_address_invalid":
         return { email, fieldErrors: { email: "That email address can't be used." } };
       case "over_email_send_rate_limit":
@@ -105,9 +110,13 @@ export async function signUp(
     }
   }
 
-  // With email confirmation on, Supabase also "succeeds" for addresses that
-  // already have an account (so nobody can probe which emails are registered).
-  // Either way, the next step is the same: check your email.
+  // "Confirm email" is off in Supabase, so sign-up signs the user straight in.
+  if (data.session) {
+    revalidatePath("/", "layout");
+    redirect("/dashboard");
+  }
+
+  // If "Confirm email" is switched back on, the next step is the email link.
   redirect("/check-email");
 }
 
