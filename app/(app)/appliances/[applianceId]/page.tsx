@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ArrowLeft, Pencil, Upload } from "lucide-react";
+import { ArrowLeft, Pencil, Plus, Upload } from "lucide-react";
 import { ApplianceDetails } from "@/components/appliances/appliance-details";
 import { ApplianceIcon } from "@/components/appliances/appliance-icon";
 import {
@@ -83,7 +83,7 @@ async function ApplianceProfileContent({
             </p>
           </div>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
           <ButtonLink href={`/appliances/${appliance.id}/edit`} variant="secondary">
             <Pencil className="size-4" aria-hidden="true" />
             Edit details
@@ -91,6 +91,10 @@ async function ApplianceProfileContent({
           <ButtonLink href="/repairs/upload" variant="secondary">
             <Upload className="size-4" aria-hidden="true" />
             Upload repair bill
+          </ButtonLink>
+          <ButtonLink href={`/appliances/${appliance.id}/repairs/new`}>
+            <Plus className="size-4" aria-hidden="true" />
+            Log a repair
           </ButtonLink>
         </div>
       </div>
@@ -104,7 +108,7 @@ async function ApplianceProfileContent({
           </Suspense>
         </div>
         <div className="lg:col-span-2">
-          <RepairTimeline repairs={repairs} />
+          <RepairTimeline applianceId={appliance.id} repairs={repairs} />
         </div>
       </div>
     </>

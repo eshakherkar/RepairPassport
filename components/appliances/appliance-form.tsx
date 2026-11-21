@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useActionState, useId } from "react";
+import { useActionState } from "react";
 import { applianceCategoryLabels } from "@/lib/appliance-categories";
 import {
   DEFAULT_WARRANTY_COVERAGE,
@@ -10,8 +9,7 @@ import {
   type ApplianceFormValues,
 } from "@/lib/appliance-validation";
 import type { ApplianceFormState } from "@/lib/data/appliance-actions";
-import { buttonClassName } from "@/components/ui/button-styles";
-import { FormMessage } from "@/components/ui/form-message";
+import { FormActions, FormErrors, FormSection } from "@/components/ui/form-section";
 import { SelectField } from "@/components/ui/select-field";
 import { TextField } from "@/components/ui/text-field";
 
@@ -78,14 +76,7 @@ export function ApplianceForm({ action, initialValues, submitLabel, cancelHref }
     // `key` rebuilds the form after each attempt, so every field shows the
     // value the server sent back (React would otherwise clear the form).
     <form key={state.attempt} action={formAction} className="grid gap-8" noValidate>
-      {state.error && <FormMessage tone="error">{state.error}</FormMessage>}
-      {errorCount > 0 && (
-        <FormMessage tone="error">
-          {errorCount === 1
-            ? "One answer needs fixing before the appliance can be saved."
-            : `${errorCount} answers need fixing before the appliance can be saved.`}
-        </FormMessage>
-      )}
+      <FormErrors error={state.error} fieldErrorCount={errorCount} thing="the appliance" />
 
       <FormSection
         title="About the appliance"
@@ -180,45 +171,7 @@ export function ApplianceForm({ action, initialValues, submitLabel, cancelHref }
         />
       </FormSection>
 
-      <div className="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end">
-        <Link href={cancelHref} className={buttonClassName("secondary")}>
-          Cancel
-        </Link>
-        <button
-          type="submit"
-          disabled={pending}
-          className={buttonClassName("primary", "md", "disabled:opacity-70")}
-        >
-          {pending ? "Saving…" : submitLabel}
-        </button>
-      </div>
+      <FormActions cancelHref={cancelHref} submitLabel={submitLabel} pending={pending} />
     </form>
-  );
-}
-
-/** A group of related fields with a heading, laid out in two columns on wider screens. */
-function FormSection({
-  title,
-  description,
-  children,
-}: {
-  title: string;
-  description?: string;
-  children: React.ReactNode;
-}) {
-  const id = useId();
-  return (
-    // role="group" + aria-labelledby: screen readers announce the section
-    // title when moving into its fields (like a <fieldset> and <legend>,
-    // which can't be laid out in columns reliably).
-    <div role="group" aria-labelledby={id} className="grid gap-5 md:grid-cols-3 md:gap-8">
-      <div>
-        <h2 id={id} className="font-semibold">
-          {title}
-        </h2>
-        {description && <p className="mt-1 text-sm text-pretty text-muted">{description}</p>}
-      </div>
-      <div className="grid content-start gap-4 sm:grid-cols-2 md:col-span-2">{children}</div>
-    </div>
   );
 }
