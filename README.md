@@ -4,13 +4,14 @@
 
 RepairPassport gives each household appliance (a fridge, washing machine, dishwasher, oven or boiler) its own digital passport. You upload repair bills and invoices, AI extracts the key details, and the app keeps a clear, chronological repair history that you can share with a QR code.
 
-> **Status:** early development. Accounts and the database work: each signed-in user sees only their own appliances and repairs. You can **add your own appliances**; editing, logging repairs and bill uploads are not built yet. An empty account can also **load five sample appliances** to try the app.
+> **Status:** early development. Accounts and the database work: each signed-in user sees only their own appliances and repairs. You can **add, edit and delete your own appliances**; logging repairs and bill uploads are not built yet. An empty account can also **load five sample appliances** to try the app.
 
 ## What works now
 
 - **Accounts** (`/sign-up`, `/sign-in`): email and password, with email confirmation; passwords need 8+ characters including a letter and a number. The dashboard pages require signing in.
 - **Dashboard** (`/dashboard`): overview cards (appliances, repair records, active warranties with an "expiring soon" warning), an appliance preview and recent repair activity
 - **Add appliance** (`/appliances/new`): a form for the name, type, brand, model, serial number, location, purchase date and manufacturer warranty. Answers are checked on the server; if something needs fixing, the form keeps what you typed and points to the problem.
+- **Edit and delete** (`/appliances/<id>/edit`, via **Edit details** on a profile): change any detail with the same form and checks, or delete the appliance and its repair history after confirming in a pop-up
 - **Appliance list** (`/appliances`): every appliance with its location, repair count and warranty status
 - **Appliance profiles** (`/appliances/<id>`): details, all warranties with today's status, and a chronological repair timeline with costs, parts, service providers and repair warranties
 - **Responsive and accessible:** works from 320px phones to desktops in light and dark mode, keyboard-friendly with a skip link and visible focus outlines, colour contrast meets WCAG AA, and respects "reduce motion"
@@ -29,7 +30,7 @@ Appliance repair bills usually end up lost in a drawer or an inbox. When the app
 
 ## Planned features
 
-- [ ] **Appliance profiles:** a digital profile for each household appliance (type, brand, model, purchase details). *Viewing and adding are built; editing is not.*
+- [ ] **Appliance profiles:** a digital profile for each household appliance (type, brand, model, purchase details). *Viewing, adding, editing and deleting are built.*
 - [ ] **Bill and invoice uploads:** attach repair bills and invoices to the right appliance
 - [ ] **AI extraction:** pull the repair date, issue, cost, replaced parts and warranty details from each uploaded bill, for the user to review
 - [ ] **Repair history:** a chronological timeline of every repair and service per appliance. *The timeline is built; it shows sample data until uploads exist.*
@@ -94,6 +95,7 @@ app/
     appliances/         /appliances
       new/              /appliances/new: the Add appliance form
       [applianceId]/    /appliances/<id>: appliance profile and repair timeline
+        edit/           /appliances/<id>/edit: edit or delete the appliance
     repairs/upload/     /repairs/upload
 components/
   logo.tsx              RepairPassport wordmark
@@ -101,6 +103,7 @@ components/
   site-footer.tsx       Marketing footer
   app-shell/            App navigation, primary actions, signed-in user menu
   appliances/           ApplianceCard, ApplianceList, ApplianceIcon, WarrantyBadge, ApplianceForm,
+                        DeleteApplianceButton,
                         ApplianceDetails, ApplianceWarranties, RepairTimeline, RecordSourceBadge
   dashboard/            StatCard, OverviewStats, RecentRepairs
   ui/                   Reusable building blocks: Badge, ButtonLink (+ shared button styles),
@@ -116,7 +119,7 @@ lib/
     derive.ts           Pure calculations: stats, appliance cards, profiles, recent repairs
     mappers.ts          Database rows → app types (snake_case columns → camelCase)
     sample-data.ts      Five fictional appliances and six repairs for trying the app
-    appliance-actions.ts    "Add appliance" Server Action: checks, saves, opens the new profile
+    appliance-actions.ts    Add, edit and delete appliance Server Actions
     sample-data-actions.ts  "Load sample appliances" Server Action (empty accounts only)
   supabase/
     server.ts           Supabase client for server code (reads the user's session cookies)

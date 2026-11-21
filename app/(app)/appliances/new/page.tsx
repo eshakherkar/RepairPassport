@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ApplianceForm } from "@/components/appliances/appliance-form";
 import { PageHeader } from "@/components/ui/page-header";
+import { createAppliance } from "@/lib/data/appliance-actions";
 
 export const metadata: Metadata = {
   title: "Add appliance",
@@ -19,7 +20,7 @@ export default function AddAppliancePage() {
         description="Create a maintenance passport for a household appliance."
       />
       <div className="rounded-xl border border-border bg-background p-5 sm:p-6">
-        <ApplianceForm />
+        <ApplianceForm action={createAppliance} submitLabel="Save appliance" cancelHref="/appliances" />
       </div>
     </>
   );

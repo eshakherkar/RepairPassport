@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ArrowLeft, Upload } from "lucide-react";
+import { ArrowLeft, Pencil, Upload } from "lucide-react";
 import { ApplianceDetails } from "@/components/appliances/appliance-details";
 import { ApplianceIcon } from "@/components/appliances/appliance-icon";
 import {
@@ -83,10 +83,16 @@ async function ApplianceProfileContent({
             </p>
           </div>
         </div>
-        <ButtonLink href="/repairs/upload" variant="secondary">
-          <Upload className="size-4" aria-hidden="true" />
-          Upload repair bill
-        </ButtonLink>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <ButtonLink href={`/appliances/${appliance.id}/edit`} variant="secondary">
+            <Pencil className="size-4" aria-hidden="true" />
+            Edit details
+          </ButtonLink>
+          <ButtonLink href="/repairs/upload" variant="secondary">
+            <Upload className="size-4" aria-hidden="true" />
+            Upload repair bill
+          </ButtonLink>
+        </div>
       </div>
 
       <div className="grid items-start gap-6 lg:grid-cols-3">

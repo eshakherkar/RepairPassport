@@ -9,7 +9,7 @@ import {
   WARRANTY_TEXT_MAX,
   type ApplianceFormValues,
 } from "@/lib/appliance-validation";
-import { createAppliance, type ApplianceFormState } from "@/lib/data/appliance-actions";
+import type { ApplianceFormState } from "@/lib/data/appliance-actions";
 import { buttonClassName } from "@/components/ui/button-styles";
 import { FormMessage } from "@/components/ui/form-message";
 import { SelectField } from "@/components/ui/select-field";
@@ -41,15 +41,26 @@ const LOCATION_SUGGESTIONS = [
   "Utility room",
 ];
 
+type ApplianceFormProps = {
+  /** The Server Action that checks and saves the answers. */
+  action: (state: ApplianceFormState, formData: FormData) => Promise<ApplianceFormState>;
+  /** The saved appliance's details, when editing. */
+  initialValues?: ApplianceFormValues;
+  submitLabel: string;
+  /** Where "Cancel" goes. */
+  cancelHref: string;
+};
+
 /**
- * The "Add appliance" form. It sends everything to the createAppliance
- * Server Action, which checks it again, saves it and opens the new
- * appliance's profile. If something needs fixing, the form comes back
- * with the user's answers kept and a message under each problem field.
+ * The form for adding or editing an appliance. It sends everything to a
+ * Server Action (createAppliance or updateAppliance), which checks it
+ * again, saves it and opens the appliance's profile. If something needs
+ * fixing, the form comes back with the user's answers kept and a message
+ * under each problem field.
  */
-export function ApplianceForm() {
-  const [state, formAction, pending] = useActionState(createAppliance, initialState);
-  const values = state.values;
+export function ApplianceForm({ action, initialValues, submitLabel, cancelHref }: ApplianceFormProps) {
+  const [state, formAction, pending] = useActionState(action, initialState);
+  const values = state.values ?? initialValues;
   const errors = state.fieldErrors ?? {};
   const firstError = FIELD_ORDER.find((field) => errors[field]);
   const errorCount = Object.keys(errors).length;
@@ -170,7 +181,7 @@ export function ApplianceForm() {
       </FormSection>
 
       <div className="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end">
-        <Link href="/appliances" className={buttonClassName("secondary")}>
+        <Link href={cancelHref} className={buttonClassName("secondary")}>
           Cancel
         </Link>
         <button
@@ -178,7 +189,7 @@ export function ApplianceForm() {
           disabled={pending}
           className={buttonClassName("primary", "md", "disabled:opacity-70")}
         >
-          {pending ? "Saving…" : "Save appliance"}
+          {pending ? "Saving…" : submitLabel}
         </button>
       </div>
     </form>

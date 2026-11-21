@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { isApplianceId } from "../appliance-validation";
 import { requireUser } from "../auth/session";
 import { createClient } from "../supabase/server";
 import type {
@@ -51,9 +52,6 @@ const fetchRepairs = cache(async (): Promise<RepairRecord[]> => {
   return data.map(toRepair);
 });
 
-/** Appliance IDs are UUIDs; anything else can't exist (and would make Postgres error). */
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
 /** All of the user's appliances, sorted by name. */
 export async function getAppliances(): Promise<Appliance[]> {
   return sortByName(await fetchAppliances());
@@ -61,7 +59,7 @@ export async function getAppliances(): Promise<Appliance[]> {
 
 /** One appliance by its ID, or `undefined` if it doesn't exist (or isn't yours). */
 export async function getApplianceById(applianceId: string): Promise<Appliance | undefined> {
-  if (!UUID_PATTERN.test(applianceId)) return undefined;
+  if (!isApplianceId(applianceId)) return undefined;
   return (await fetchAppliances()).find((a) => a.id === applianceId);
 }
 
@@ -81,7 +79,7 @@ export async function getApplianceSummaries(today: ISODate): Promise<ApplianceSu
 export async function getApplianceProfile(
   applianceId: string,
 ): Promise<ApplianceProfile | undefined> {
-  if (!UUID_PATTERN.test(applianceId)) return undefined;
+  if (!isApplianceId(applianceId)) return undefined;
   const [appliances, repairs] = await Promise.all([fetchAppliances(), fetchRepairs()]);
   return buildProfile(appliances, repairs, applianceId);
 }

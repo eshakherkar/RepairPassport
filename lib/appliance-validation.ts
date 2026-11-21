@@ -8,7 +8,7 @@
  */
 
 import { applianceCategoryLabels } from "./appliance-categories";
-import type { ApplianceCategory, ISODate } from "./types";
+import type { Appliance, ApplianceCategory, ISODate } from "./types";
 import { daysBetween } from "./warranty";
 
 /** Longest text the database accepts for names, brands, models etc. */
@@ -49,6 +49,29 @@ export type NewAppliance = {
 export type ParseResult =
   | { ok: true; appliance: NewAppliance }
   | { ok: false; fieldErrors: ApplianceFieldErrors };
+
+/** Appliance IDs are UUIDs; anything else can't exist (and would make Postgres error). */
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function isApplianceId(value: string): boolean {
+  return UUID_PATTERN.test(value);
+}
+
+/** A saved appliance as form values, to fill in the edit form. */
+export function toApplianceFormValues(appliance: Appliance): ApplianceFormValues {
+  return {
+    name: appliance.name,
+    category: appliance.category,
+    brand: appliance.brand,
+    model: appliance.model,
+    serialNumber: appliance.serialNumber ?? "",
+    location: appliance.location,
+    purchaseDate: appliance.purchaseDate,
+    warrantyExpiresOn: appliance.manufacturerWarranty?.expiresOn ?? "",
+    warrantyCoverage: appliance.manufacturerWarranty?.coverage ?? "",
+    warrantyProvider: appliance.manufacturerWarranty?.provider ?? "",
+  };
+}
 
 /** Reads the form's fields as trimmed strings (missing fields become ""). */
 export function readApplianceForm(formData: FormData): ApplianceFormValues {
