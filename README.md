@@ -8,7 +8,7 @@ RepairPassport gives each household appliance (a fridge, washing machine, dishwa
 
 ## What works now
 
-- **Accounts** (`/sign-up`, `/sign-in`): email and password, with email confirmation; passwords need 8+ characters including a letter and a number. The dashboard pages require signing in.
+- **Accounts** (`/sign-up`, `/sign-in`): email and password, with email confirmation; passwords need 8+ characters including a letter and a number. **Forgot password?** on the sign-in page emails a link to choose a new one (`/forgot-password` → `/reset-password`). The dashboard pages require signing in.
 - **Dashboard** (`/dashboard`): overview cards (appliances, repair records, active warranties with an "expiring soon" warning), an appliance preview and recent repair activity
 - **Add appliance** (`/appliances/new`): a form for the name, type, brand, model, serial number, location, purchase date and manufacturer warranty. Answers are checked on the server; if something needs fixing, the form keeps what you typed and points to the problem.
 - **Edit and delete** (`/appliances/<id>/edit`, via **Edit details** on a profile): change any detail with the same form and checks, or delete the appliance and its repair history after confirming in a pop-up

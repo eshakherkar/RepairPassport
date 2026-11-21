@@ -11,6 +11,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { requireUser } from "./session";
 import { safeNextPath } from "./routes";
 import { validateEmail, validateNewPassword } from "./validation";
 
@@ -20,6 +21,8 @@ export type AuthFormState = {
   fieldErrors?: { email?: string; password?: string };
   /** Sent back so the email field keeps its value. Passwords never are. */
   email?: string;
+  /** True once a password-reset email has been requested. */
+  sent?: boolean;
 };
 
 export async function signIn(
@@ -106,6 +109,55 @@ export async function signUp(
   // already have an account (so nobody can probe which emails are registered).
   // Either way, the next step is the same: check your email.
   redirect("/check-email");
+}
+
+/**
+ * Emails a password-reset link. Always reports success, so nobody can use
+ * this form to find out which emails have accounts.
+ */
+export async function requestPasswordReset(
+  _previous: AuthFormState,
+  formData: FormData,
+): Promise<AuthFormState> {
+  const email = String(formData.get("email") ?? "").trim();
+  const emailError = validateEmail(email);
+  if (emailError) return { email, fieldErrors: { email: emailError } };
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${await getOrigin()}/auth/confirm?next=/reset-password`,
+  });
+  if (error?.code === "over_email_send_rate_limit") {
+    return { email, error: "Too many emails were sent recently. Please wait a while and try again." };
+  }
+  return { email, sent: true };
+}
+
+/** Sets a new password for the user signed in by the reset link. */
+export async function updatePassword(
+  _previous: AuthFormState,
+  formData: FormData,
+): Promise<AuthFormState> {
+  await requireUser();
+  const password = String(formData.get("password") ?? "");
+  const passwordError = validateNewPassword(password);
+  if (passwordError) return { fieldErrors: { password: passwordError } };
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    switch (error.code) {
+      case "same_password":
+        return { fieldErrors: { password: "Choose a password different from your old one." } };
+      case "weak_password":
+        return { fieldErrors: { password: "Choose a stronger password." } };
+      default:
+        return { error: "Couldn’t change your password. Please try again." };
+    }
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/dashboard");
 }
 
 export async function signOut() {

@@ -20,6 +20,11 @@ export default function SignInPage({ searchParams }: PageProps<"/sign-in">) {
       <Suspense fallback={<AuthFormSkeleton />}>
         <SignInFormFromUrl searchParams={searchParams} />
       </Suspense>
+      <p className="mt-4 text-center text-sm">
+        <Link href="/forgot-password" className="font-medium text-brand hover:text-brand-hover">
+          Forgot password?
+        </Link>
+      </p>
       <p className="mt-6 text-center text-sm text-muted">
         New to RepairPassport?{" "}
         <Link href="/sign-up" className="font-medium text-brand hover:text-brand-hover">

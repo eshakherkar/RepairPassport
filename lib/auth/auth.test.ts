@@ -19,6 +19,7 @@ describe("isProtectedPath", () => {
   it("protects app pages but not look-alikes", () => {
     expect(isProtectedPath("/appliances/new")).toBe(true);
     expect(isProtectedPath("/repairs")).toBe(true);
+    expect(isProtectedPath("/reset-password")).toBe(true);
     expect(isProtectedPath("/appliancesxyz")).toBe(false);
     expect(isProtectedPath("/")).toBe(false);
   });

@@ -4,10 +4,11 @@
  */
 
 /** Pages that require a signed-in user. Everything under them too. */
-export const PROTECTED_PATH_PREFIXES = ["/dashboard", "/appliances", "/repairs"];
+// /reset-password needs the session that the emailed reset link signs in.
+export const PROTECTED_PATH_PREFIXES = ["/dashboard", "/appliances", "/repairs", "/reset-password"];
 
 /** Sign-in and sign-up pages: signed-in users are sent to the dashboard. */
-export const AUTH_PAGES = ["/sign-in", "/sign-up"];
+export const AUTH_PAGES = ["/sign-in", "/sign-up", "/forgot-password"];
 
 export const DEFAULT_AFTER_SIGN_IN = "/dashboard";
 
