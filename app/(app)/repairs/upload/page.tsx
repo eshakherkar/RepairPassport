@@ -5,6 +5,7 @@ import { UploadBillForm } from "@/components/appliances/upload-bill-form";
 import { ButtonLink } from "@/components/ui/button-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { canReadBills } from "@/lib/ai/read-bill";
 import { getAppliances } from "@/lib/data/appliances";
 
 export const metadata: Metadata = {
@@ -17,7 +18,11 @@ export default function UploadRepairBillPage({ searchParams }: PageProps<"/repai
     <>
       <PageHeader
         title="Upload a repair bill"
-        description="AI reads the date, problem, cost, parts and warranty from your bill. You check the details, then they're added to the appliance's history with the bill attached."
+        description={
+          canReadBills()
+            ? "AI reads the date, problem, cost, parts and warranty from your bill. You check the details, then they're added to the appliance's history with the bill attached."
+            : "Upload a photo or PDF of the bill and type in its details. The bill is saved with the repair, so it's always with the appliance's history."
+        }
       />
       <div className="rounded-xl border border-border bg-background p-5 sm:p-6">
         {/* The appliance list belongs to whoever is signed in, so it loads per visit. */}
@@ -47,6 +52,7 @@ async function UploadBillContent({ searchParams }: Pick<PageProps<"/repairs/uplo
     <UploadBillForm
       appliances={appliances.map(({ id, name }) => ({ id, name }))}
       defaultApplianceId={typeof appliance === "string" ? appliance : undefined}
+      aiEnabled={canReadBills()}
     />
   );
 }

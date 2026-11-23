@@ -15,6 +15,8 @@ export type ReadBillState =
       billPath: string;
       /** Details read by AI; null when the user has to type them in. */
       values: RepairFormValues | null;
+      /** False when the server has no Anthropic API key (AI reading is off). */
+      aiEnabled: boolean;
     };
 
 /**
@@ -56,6 +58,7 @@ export async function readBill(_previous: ReadBillState, formData: FormData): Pr
     return { step: "upload", applianceId, error: "Couldn't upload the bill. Please try again." };
   }
 
-  const values = canReadBills() ? await readBillWithAI(bytes.toString("base64"), mediaType) : null;
-  return { step: "review", applianceId, billPath, values };
+  const aiEnabled = canReadBills();
+  const values = aiEnabled ? await readBillWithAI(bytes.toString("base64"), mediaType) : null;
+  return { step: "review", applianceId, billPath, values, aiEnabled };
 }

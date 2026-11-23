@@ -12,7 +12,7 @@ RepairPassport gives each household appliance (a fridge, washing machine, dishwa
 
 1. **Sign up** on the live site. You're signed in straight away.
 2. Click **Load sample appliances** on the empty dashboard.
-3. Open an appliance and click **Upload repair bill**. Upload a photo or PDF of a bill; AI fills in the repair, you check it and save. The bill is stored with the repair (**Bill** link).
+3. Open an appliance and click **Upload repair bill**. Upload a photo or PDF of a bill, fill in the repair details and save. The bill is stored with the repair (**Bill** link). *(The live demo runs without an AI key, so AI bill reading is off there; with `ANTHROPIC_API_KEY` set, Claude fills the details in for you.)*
 4. On the same appliance, click **Create share link**. Scan the QR code with a phone to see the read-only history.
 
 ## What works now

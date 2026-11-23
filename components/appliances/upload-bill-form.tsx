@@ -17,13 +17,15 @@ type UploadBillFormProps = {
   appliances: { id: string; name: string }[];
   /** Pre-selected when coming from an appliance's page. */
   defaultApplianceId?: string;
+  /** Whether the server can read bills with AI (it needs an API key). */
+  aiEnabled: boolean;
 };
 
 /**
  * Step 1: choose the appliance and the bill; AI reads it (lib/data/bill-actions.ts).
  * Step 2: check the details in the usual repair form, then save.
  */
-export function UploadBillForm({ appliances, defaultApplianceId }: UploadBillFormProps) {
+export function UploadBillForm({ appliances, defaultApplianceId, aiEnabled }: UploadBillFormProps) {
   const [state, formAction, pending] = useActionState(readBill, initialState);
 
   if (state.step === "review") return <ReviewBill bill={state} />;
@@ -65,8 +67,16 @@ export function UploadBillForm({ appliances, defaultApplianceId }: UploadBillFor
         disabled={pending}
         className={buttonClassName("primary", "md", "w-full sm:w-fit disabled:opacity-70")}
       >
-        <Sparkles className="size-4" aria-hidden="true" />
-        {pending ? "Reading your bill… (up to a minute)" : "Upload and read bill"}
+        {aiEnabled ? (
+          <>
+            <Sparkles className="size-4" aria-hidden="true" />
+            {pending ? "Reading your bill… (up to a minute)" : "Upload and read bill"}
+          </>
+        ) : pending ? (
+          "Uploading…"
+        ) : (
+          "Upload bill"
+        )}
       </button>
     </form>
   );
@@ -91,10 +101,15 @@ function ReviewBill({ bill }: { bill: Extract<ReadBillState, { step: "review" }>
           AI read your bill and filled in the details below. Check each one against the bill, fix
           anything that&apos;s wrong, then save.
         </FormMessage>
-      ) : (
+      ) : bill.aiEnabled ? (
         <FormMessage tone="error">
           Your bill is uploaded, but AI couldn&apos;t read it this time. Please type in the details
           below; the bill will be saved with the repair.
+        </FormMessage>
+      ) : (
+        <FormMessage tone="success">
+          Your bill is uploaded. Type in the details from the bill below, and it will be saved with
+          the repair.
         </FormMessage>
       )}
       <RepairForm

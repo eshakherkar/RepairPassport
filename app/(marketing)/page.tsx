@@ -36,7 +36,7 @@ const features: Feature[] = [
     icon: ScanText,
     title: "AI reads the paperwork",
     description:
-      "AI extracts the repair date, issue, cost, replaced parts and warranty details from each bill.",
+      "Built-in AI bill reading extracts the repair date, issue, cost, parts and warranty. It switches on with an Anthropic API key; this demo runs without one, so you type the details.",
   },
   {
     icon: History,
@@ -70,7 +70,7 @@ const steps = [
     icon: Receipt,
     title: "Upload a repair bill",
     description:
-      "AI pulls out the date, issue, cost, parts and warranty, ready for you to check.",
+      "Attach the bill and record the date, issue, cost, parts and warranty with it.",
   },
   {
     icon: ShieldCheck,
@@ -93,10 +93,10 @@ export default function Home() {
             A digital maintenance passport for your household appliances.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-pretty text-muted">
-            Upload repair bills and RepairPassport uses AI to turn them into a
-            clear repair history for each appliance, with dates, issues,
-            costs, replaced parts and warranty details, ready to share with a
-            QR code.
+            Keep every repair bill with the appliance it belongs to, and
+            RepairPassport turns them into a clear repair history with dates,
+            issues, costs, replaced parts and warranty details, ready to share
+            with a QR code.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
