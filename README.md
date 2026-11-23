@@ -17,7 +17,7 @@ RepairPassport gives each household appliance (a fridge, washing machine, dishwa
 
 ## What works now
 
-- **One-click demo** (**Try the demo** on the home, sign-in and sign-up pages): signs the visitor in as a private guest (Supabase anonymous sign-in), copies in the fictional sample appliances and opens the dashboard. Each guest's data is separate (Row Level Security). Guest accounts pile up over time; to clear them, run `delete from auth.users where is_anonymous and created_at < now() - interval '7 days';` in the Supabase SQL editor (their bill files stay in Storage).
+- **One-click demo** (**Try the demo** on the home, sign-in and sign-up pages): signs the visitor in as a private guest (Supabase anonymous sign-in), copies in the fictional sample appliances and opens the dashboard. Each guest's data is separate (Row Level Security). A nightly database job (`delete-old-demo-guests`, pg_cron, 03:17 UTC) deletes guests older than 2 days together with their appliances and repairs (their uploaded bill files stay in Storage).
 - **Accounts** (`/sign-up`, `/sign-in`): email and password; new accounts are signed in straight away (Supabase's "Confirm email" setting is off, so judges can try the app without an inbox); passwords need 8+ characters including a letter and a number. **Forgot password?** on the sign-in page emails a link to choose a new one (`/forgot-password` → `/reset-password`). The dashboard pages require signing in.
 - **Dashboard** (`/dashboard`): overview cards (appliances, repair records, active warranties with an "expiring soon" warning), an appliance preview and recent repair activity
 - **Add appliance** (`/appliances/new`): a form for the name, type, brand, model, serial number, location, purchase date and manufacturer warranty. Answers are checked on the server; if something needs fixing, the form keeps what you typed and points to the problem.
@@ -187,7 +187,7 @@ The database is PostgreSQL, hosted by Supabase. Its structure is defined by the 
 | `repairs` | One row per repair or service: appliance, date, issue, work done, cost (INR), replaced parts, service provider, repair warranty where the details came from (`manual`, `ai-extracted`, `needs-review`) and the stored bill (`bill_path`) |
 | Storage bucket `bills` | Private bill files, one folder per user (`<user id>/<file>`) |
 
-**Security.** Every row has a `user_id` owner. Signed-out visitors have no access. Row Level Security lets signed-in users see, add, change and delete only their own rows, and a repair can only be attached to the same user's appliance. Bill files follow the same rule by folder. The one public door is `get_shared_appliance(token)`: it returns only the appliance whose unguessable share token matches, without the owner, serial number or bills.
+**Security.** Every row has a `user_id` owner. Signed-out visitors have no access. Row Level Security lets signed-in users see, add, change and delete only their own rows, and a repair can only be attached to the same user's appliance. Bill files follow the same rule by folder, and are deleted when their repair or appliance is deleted. Signed-in users only have read, add, change and delete permissions on the tables. The one public door is `get_shared_appliance(token)`: it returns only the appliance whose unguessable share token matches, without the owner, serial number or bills.
 
 **After adding a migration:** regenerate `lib/supabase/database.types.ts` (Supabase dashboard → API Docs, or the Supabase CLI / connector) and run `npx tsc --noEmit`.
 

@@ -24,6 +24,7 @@ import {
 } from "../repair-validation";
 import type { TablesUpdate } from "../supabase/database.types";
 import { createClient } from "../supabase/server";
+import { removeBills } from "./remove-bills";
 import { toISODate } from "../warranty";
 
 export type RepairFormState = {
@@ -145,14 +146,16 @@ export async function deleteRepair(
   if (!isRecordId(applianceId) || !isRecordId(repairId)) return { error: GONE };
 
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data: deleted, error } = await supabase
     .from("repairs")
     .delete()
     .eq("id", repairId)
-    .eq("appliance_id", applianceId);
+    .eq("appliance_id", applianceId)
+    .select("bill_path");
   if (error) {
     return { error: "Couldn’t delete the repair. Please check your connection and try again." };
   }
+  await removeBills(supabase, deleted.map((r) => r.bill_path));
 
   revalidatePath("/", "layout");
   redirect(`/appliances/${applianceId}`);

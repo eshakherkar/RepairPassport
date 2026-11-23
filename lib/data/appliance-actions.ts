@@ -21,6 +21,7 @@ import {
 } from "../appliance-validation";
 import type { TablesInsert } from "../supabase/database.types";
 import { createClient } from "../supabase/server";
+import { removeBills } from "./remove-bills";
 import { toISODate } from "../warranty";
 
 export type ApplianceFormState = {
@@ -123,10 +124,16 @@ export async function deleteAppliance(applianceId: string): Promise<DeleteApplia
   if (!isRecordId(applianceId)) return { error: "This appliance doesn’t exist any more." };
 
   const supabase = await createClient();
+  // Its repairs are deleted with it (ON DELETE CASCADE), so note their bills first.
+  const { data: repairs } = await supabase
+    .from("repairs")
+    .select("bill_path")
+    .eq("appliance_id", applianceId);
   const { error } = await supabase.from("appliances").delete().eq("id", applianceId);
   if (error) {
     return { error: "Couldn’t delete the appliance. Please check your connection and try again." };
   }
+  await removeBills(supabase, (repairs ?? []).map((r) => r.bill_path));
 
   revalidatePath("/", "layout");
   redirect("/appliances");
