@@ -121,7 +121,7 @@ export const sampleRepairs: RepairRecord[] = [
       coverage: "Door gasket",
       provider: "CoolCare Appliance Services",
     },
-    source: "ai-extracted",
+    source: "manual",
   },
   {
     id: "repair-washer-2025-02",
@@ -148,7 +148,7 @@ export const sampleRepairs: RepairRecord[] = [
       coverage: "Drive belt",
       provider: "QuickFix Home Appliances",
     },
-    source: "ai-extracted",
+    source: "manual",
   },
   {
     id: "repair-ac-2026-05",
@@ -175,6 +175,6 @@ export const sampleRepairs: RepairRecord[] = [
       coverage: "Magnetron",
       provider: "QuickFix Home Appliances",
     },
-    source: "needs-review",
+    source: "manual",
   },
 ];

@@ -49,7 +49,7 @@ const features: Feature[] = [
     icon: QrCode,
     title: "Share with a QR code",
     description:
-      "Generate a QR code so a technician, landlord or buyer can view an appliance's maintenance history.",
+      "A QR code opens a read-only history with a quick condition summary, so a technician, tenant or second-hand buyer knows what they're dealing with.",
   },
   {
     icon: MessageCircleQuestion,

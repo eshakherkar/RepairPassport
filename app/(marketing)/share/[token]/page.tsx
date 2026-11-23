@@ -9,6 +9,7 @@ import {
   ApplianceWarrantiesSkeleton,
 } from "@/components/appliances/appliance-warranties";
 import { RepairTimeline } from "@/components/appliances/repair-timeline";
+import { SharedSummary } from "@/components/appliances/shared-summary";
 import { getSharedProfile } from "@/lib/data/shared";
 
 /*
@@ -56,6 +57,10 @@ async function SharedContent({ params }: Pick<PageProps<"/share/[token]">, "para
           </p>
         </div>
       </div>
+
+      <Suspense fallback={<div className="h-40 motion-safe:animate-pulse rounded-xl border border-border" />}>
+        <SharedSummary appliance={appliance} repairs={repairs} warranties={warranties} />
+      </Suspense>
 
       <div className="grid items-start gap-6 lg:grid-cols-3">
         <div className="grid gap-6">

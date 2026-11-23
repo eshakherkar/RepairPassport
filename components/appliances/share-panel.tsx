@@ -16,8 +16,9 @@ export async function SharePanel({ appliance }: { appliance: Appliance }) {
     return (
       <Panel title="Share history">
         <p className="text-sm text-pretty text-muted">
-          Create a read-only link and QR code for this appliance&apos;s repair history. Anyone with
-          the link can view it, without signing in. You can stop sharing at any time.
+          Create a read-only link and QR code for this appliance&apos;s repair history, for a
+          technician, tenant or buyer. It opens with a quick condition summary. Anyone with the
+          link can view it without signing in, and you can stop sharing at any time.
         </p>
         <form action={setSharing.bind(null, appliance.id, true)} className="mt-4">
           <button type="submit" className={buttonClassName("secondary")}>

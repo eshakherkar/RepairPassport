@@ -23,7 +23,7 @@ export function RecordSourceBadge({ source }: { source: RecordSource }) {
       return (
         <Badge>
           <PenLine className="size-3.5" aria-hidden="true" />
-          Entered manually
+          Owner-entered
         </Badge>
       );
   }

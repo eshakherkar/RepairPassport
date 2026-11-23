@@ -2,7 +2,7 @@
 
 **A digital maintenance passport for household appliances.**
 
-RepairPassport gives each household appliance (a fridge, washing machine, dishwasher, oven or boiler) its own digital passport. You upload repair bills and invoices, AI extracts the key details, and the app keeps a clear, chronological repair history that you can share with a QR code.
+RepairPassport gives each household appliance (a fridge, washing machine, dishwasher, oven or boiler) its own digital passport. You keep each repair bill with the appliance it belongs to, and the app turns them into a clear, chronological repair history that you can share with a QR code, including a quick condition summary for second-hand buyers, tenants and technicians. AI bill reading is built in and switches on with an Anthropic API key (it is off in the free public demo).
 
 **Live demo:** [repairpassport-esha.vercel.app](https://repairpassport-esha.vercel.app). Click **Try the demo, no sign-up**: you get a private guest account already filled with fictional sample appliances. Or create a normal account in seconds.
 
@@ -27,6 +27,7 @@ RepairPassport gives each household appliance (a fridge, washing machine, dishwa
 - **Repair or replace?** (on each appliance page): compares total repair costs and age with a typical new price and lifespan for that type of appliance (estimates in `lib/replacement-advice.ts`), and says *Worth repairing*, *Keep an eye on it* or *Consider replacing*.
 - **Printable passport card** (**Print passport** on each appliance page, `/appliances/<id>/passport`): a one-page card with the key details, warranty, repair summary and the share QR code, to print or save as PDF and stick on the appliance.
 - **Share with a QR code** (**Share history** on a profile): creates a read-only link (`/share/<token>`) and a QR code for a technician, landlord or buyer. No sign-in needed to view it; it hides the serial number and bills, and **Stop sharing** turns the link off.
+- **Before-you-buy summary** (top of every share page): the appliance's age against its typical lifespan, number and total cost of repairs, warranty cover today and an overall condition read, with a clear note that records are owner-entered and not independently verified. Timeline entries are labelled **Owner-entered** or **Read by AI**.
 - **Edit and delete repairs** (**Edit** beside each repair in the timeline): fix any detail or delete the repair after confirming. Repairs read by AI show **Review** instead; saving one marks it as reviewed.
 - **Appliance list** (`/appliances`): every appliance with its location, repair count and warranty status
 - **Appliance profiles** (`/appliances/<id>`): details, all warranties with today's status, and a chronological repair timeline with costs, parts, service providers and repair warranties
@@ -48,7 +49,7 @@ Appliance repair bills usually end up lost in a drawer or an inbox. When the app
 
 - [x] **Appliance profiles:** a digital profile for each household appliance (type, brand, model, purchase details). *Viewing, adding, editing and deleting are built.*
 - [x] **Bill and invoice uploads:** attach repair bills and invoices to the right appliance
-- [x] **AI extraction:** pull the repair date, issue, cost, replaced parts and warranty details from each uploaded bill, for the user to review
+- [x] **AI extraction (built, off in the public demo):** pull the repair date, issue, cost, replaced parts and warranty details from each uploaded bill, for the user to review. Needs `ANTHROPIC_API_KEY`; not yet run against real bills.
 - [x] **Repair history:** a chronological timeline of every repair and service per appliance, logged by hand or from uploaded bills.
 - [x] **QR code sharing:** generate a QR code that shares an appliance's maintenance history
 - [ ] **AI assistant** *(later)*: ask questions about an appliance's history, such as "When was the dishwasher pump last replaced?"
@@ -121,7 +122,7 @@ app/
         repairs/new/    /appliances/<id>/repairs/new: log a repair by hand
         repairs/[repairId]/edit/  edit or delete one repair
         repairs/[repairId]/bill   opens the repair's stored bill (owner only)
-    repairs/upload/     /repairs/upload: upload a bill, AI fills in the repair
+    repairs/upload/     /repairs/upload: upload a bill; AI fills in the repair when a key is set
 components/
   logo.tsx              RepairPassport wordmark
   site-header.tsx       Marketing navigation bar
