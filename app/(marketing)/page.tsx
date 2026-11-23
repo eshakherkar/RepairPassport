@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DemoButton } from "@/components/auth/demo-button";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
@@ -87,7 +88,7 @@ export default function Home() {
       <section className="mx-auto max-w-6xl px-4 pb-16 pt-16 sm:px-6 sm:pt-24 lg:pb-24">
         <div className="max-w-3xl">
           <p className="mb-4 inline-flex items-center rounded-full bg-brand-soft px-3 py-1 text-sm font-medium text-brand">
-            Free to try · sign up in seconds
+            Free to try · one-click demo with sample appliances
           </p>
           <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
             A digital maintenance passport for your household appliances.
@@ -98,20 +99,15 @@ export default function Home() {
             issues, costs, replaced parts and warranty details, ready to share
             with a QR code.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-start">
+            <DemoButton />
             <Link
               href="/sign-up"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-brand px-5 font-medium text-background transition-colors hover:bg-brand-hover"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-border px-5 font-medium transition-colors hover:bg-surface"
             >
-              Try it free
+              Create an account
               <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
-            <a
-              href="#how-it-works"
-              className="inline-flex h-11 items-center justify-center rounded-lg border border-border px-5 font-medium transition-colors hover:bg-surface"
-            >
-              See how it works
-            </a>
           </div>
         </div>
       </section>

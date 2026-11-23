@@ -4,19 +4,20 @@
 
 RepairPassport gives each household appliance (a fridge, washing machine, dishwasher, oven or boiler) its own digital passport. You upload repair bills and invoices, AI extracts the key details, and the app keeps a clear, chronological repair history that you can share with a QR code.
 
-**Live demo:** [repairpassport-esha.vercel.app](https://repairpassport-esha.vercel.app). Sign up in seconds (no email confirmation), click **Load sample appliances**, then try uploading a bill or sharing an appliance with a QR code.
+**Live demo:** [repairpassport-esha.vercel.app](https://repairpassport-esha.vercel.app). Click **Try the demo, no sign-up**: you get a private guest account already filled with fictional sample appliances. Or create a normal account in seconds.
 
 > **Status:** working MVP. Each signed-in user sees only their own appliances, repairs and bills (Row Level Security). Built for LaunchPad Hacks.
 
 ### Try it in 2 minutes
 
-1. **Sign up** on the live site. You're signed in straight away.
-2. Click **Load sample appliances** on the empty dashboard.
+1. On the live site, click **Try the demo, no sign-up**. A private guest account opens on a dashboard with five fictional appliances and six repairs. (Or sign up, then click **Load sample appliances**.)
+2. Look around: warranties expiring soon, repair timelines, edit or add an appliance.
 3. Open an appliance and click **Upload repair bill**. Upload a photo or PDF of a bill, fill in the repair details and save. The bill is stored with the repair (**Bill** link). *(The live demo runs without an AI key, so AI bill reading is off there; with `ANTHROPIC_API_KEY` set, Claude fills the details in for you.)*
 4. On the same appliance, click **Create share link**. Scan the QR code with a phone to see the read-only history.
 
 ## What works now
 
+- **One-click demo** (**Try the demo** on the home, sign-in and sign-up pages): signs the visitor in as a private guest (Supabase anonymous sign-in), copies in the fictional sample appliances and opens the dashboard. Each guest's data is separate (Row Level Security). Guest accounts pile up over time; to clear them, run `delete from auth.users where is_anonymous and created_at < now() - interval '7 days';` in the Supabase SQL editor (their bill files stay in Storage).
 - **Accounts** (`/sign-up`, `/sign-in`): email and password; new accounts are signed in straight away (Supabase's "Confirm email" setting is off, so judges can try the app without an inbox); passwords need 8+ characters including a letter and a number. **Forgot password?** on the sign-in page emails a link to choose a new one (`/forgot-password` → `/reset-password`). The dashboard pages require signing in.
 - **Dashboard** (`/dashboard`): overview cards (appliances, repair records, active warranties with an "expiring soon" warning), an appliance preview and recent repair activity
 - **Add appliance** (`/appliances/new`): a form for the name, type, brand, model, serial number, location, purchase date and manufacturer warranty. Answers are checked on the server; if something needs fixing, the form keeps what you typed and points to the problem.

@@ -29,7 +29,8 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   if (error || !data?.claims?.sub) return null;
 
   const { sub, email } = data.claims;
-  return { id: sub, email: typeof email === "string" ? email : null };
+  // Demo guests (anonymous users) have an empty email.
+  return { id: sub, email: typeof email === "string" && email ? email : null };
 });
 
 /** Like getCurrentUser, but sends signed-out visitors to the sign-in page. */

@@ -9,6 +9,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { copySampleData } from "@/lib/data/copy-sample-data";
 import { getSiteOrigin } from "@/lib/site-origin";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "./session";
@@ -164,6 +165,32 @@ export async function updatePassword(
         return { error: "Couldn’t change your password. Please try again." };
     }
   }
+
+  revalidatePath("/", "layout");
+  redirect("/dashboard");
+}
+
+/**
+ * "Try the demo": signs the visitor in as a private guest (a Supabase
+ * anonymous user, no email or password) and fills the account with the
+ * fictional sample appliances. Row Level Security keeps each guest's data
+ * separate, so judges can't see or change each other's demos.
+ */
+export async function startDemo(): Promise<AuthFormState> {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInAnonymously();
+  if (error) {
+    return {
+      error:
+        error.code === "over_request_rate_limit"
+          ? "Too many demos were started recently. Please try again in a few minutes."
+          : "Couldn't start the demo. Please try again.",
+    };
+  }
+
+  // Same client, now signed in as the guest, so the rows belong to them.
+  const sampleError = await copySampleData(supabase);
+  if (sampleError) return { error: sampleError };
 
   revalidatePath("/", "layout");
   redirect("/dashboard");

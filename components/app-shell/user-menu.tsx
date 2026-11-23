@@ -38,7 +38,8 @@ export async function UserMenu({ variant }: { variant: "sidebar" | "compact" }) 
         <span className="min-w-0">
           <span className="sr-only">Signed in as </span>
           <span className="block truncate font-medium" title={user.email ?? undefined}>
-            {user.email ?? "Signed in"}
+            {/* Demo guests (anonymous accounts) have no email. */}
+            {user.email ?? "Demo guest"}
           </span>
         </span>
       </div>
