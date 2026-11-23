@@ -20,7 +20,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-1">
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-surface px-4 py-5 lg:flex">
+      <aside className="sticky top-0 hidden print:hidden! h-screen w-64 shrink-0 flex-col border-r border-border bg-surface px-4 py-5 lg:flex">
         <div className="px-2">
           <Logo href="/dashboard" />
         </div>
@@ -45,7 +45,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Phone and tablet top bar */}
-        <header className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur lg:hidden">
+        <header className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur lg:hidden print:hidden!">
           <div className="flex h-14 items-center justify-between gap-4 px-4 sm:px-6">
             <Logo href="/dashboard" />
             <Suspense fallback={<UserMenuSkeleton variant="compact" />}>

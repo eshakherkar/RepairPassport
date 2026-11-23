@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ArrowLeft, Pencil, Plus, Upload } from "lucide-react";
+import { ArrowLeft, Pencil, Plus, Printer, Upload } from "lucide-react";
 import { ApplianceDetails } from "@/components/appliances/appliance-details";
 import { ApplianceIcon } from "@/components/appliances/appliance-icon";
 import {
@@ -10,6 +10,7 @@ import {
   ApplianceWarrantiesSkeleton,
 } from "@/components/appliances/appliance-warranties";
 import { RepairTimeline } from "@/components/appliances/repair-timeline";
+import { ReplacementAdvicePanel } from "@/components/appliances/replacement-advice-panel";
 import { SharePanel } from "@/components/appliances/share-panel";
 import { ButtonLink } from "@/components/ui/button-link";
 import { getApplianceById, getApplianceProfile } from "@/lib/data/appliances";
@@ -89,6 +90,10 @@ async function ApplianceProfileContent({
             <Pencil className="size-4" aria-hidden="true" />
             Edit details
           </ButtonLink>
+          <ButtonLink href={`/appliances/${appliance.id}/passport`} variant="secondary">
+            <Printer className="size-4" aria-hidden="true" />
+            Print passport
+          </ButtonLink>
           <ButtonLink href={`/repairs/upload?appliance=${appliance.id}`} variant="secondary">
             <Upload className="size-4" aria-hidden="true" />
             Upload repair bill
@@ -106,6 +111,9 @@ async function ApplianceProfileContent({
           {/* Warranty status uses today's date, so it loads per visit. */}
           <Suspense fallback={<ApplianceWarrantiesSkeleton />}>
             <ApplianceWarranties warranties={warranties} />
+          </Suspense>
+          <Suspense fallback={<ApplianceWarrantiesSkeleton />}>
+            <ReplacementAdvicePanel appliance={appliance} repairs={repairs} />
           </Suspense>
           <SharePanel appliance={appliance} />
         </div>

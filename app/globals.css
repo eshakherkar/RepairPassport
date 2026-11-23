@@ -38,6 +38,19 @@
   }
 }
 
+/* Printed pages (the passport card) always use the light colours. */
+@media print {
+  :root {
+    --background: #ffffff;
+    --foreground: #0f172a;
+    --muted: #475569;
+    --surface: #ffffff;
+    --border: #cbd5e1;
+    --brand: #047857;
+    color-scheme: light;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
