@@ -12,7 +12,7 @@ import { redirect } from "next/navigation";
 import { copySampleData } from "@/lib/data/copy-sample-data";
 import { getSiteOrigin } from "@/lib/site-origin";
 import { createClient } from "@/lib/supabase/server";
-import { requireUser } from "./session";
+import { getCurrentUser, requireUser } from "./session";
 import { safeNextPath } from "./routes";
 import { validateEmail, validateNewPassword } from "./validation";
 
@@ -177,6 +177,9 @@ export async function updatePassword(
  * separate, so judges can't see or change each other's demos.
  */
 export async function startDemo(): Promise<AuthFormState> {
+  // Already signed in (a real account or a guest): don't swap accounts.
+  if (await getCurrentUser()) redirect("/dashboard");
+
   const supabase = await createClient();
   const { error } = await supabase.auth.signInAnonymously();
   if (error) {

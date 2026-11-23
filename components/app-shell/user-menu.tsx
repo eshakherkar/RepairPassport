@@ -1,6 +1,6 @@
 import { CircleUserRound, LogOut } from "lucide-react";
-import { signOut } from "@/lib/auth/actions";
 import { requireUser } from "@/lib/auth/session";
+import { SignOutForm } from "./sign-out-form";
 
 /**
  * Shows who is signed in, with a Sign out button.
@@ -19,15 +19,15 @@ export async function UserMenu({ variant }: { variant: "sidebar" | "compact" }) 
 
   if (variant === "compact") {
     return (
-      <form action={signOut}>
+      <SignOutForm guest={!user.email}>
         <button
           type="submit"
           className="flex h-9 items-center gap-2 rounded-lg px-2 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground focus-visible:outline-2 focus-visible:outline-brand"
         >
           <LogOut className="size-4" aria-hidden="true" />
-          <span className="sr-only sm:not-sr-only">Sign out</span>
+          <span className="sr-only sm:not-sr-only">{user.email ? "Sign out" : "Leave demo"}</span>
         </button>
-      </form>
+      </SignOutForm>
     );
   }
 
@@ -43,15 +43,15 @@ export async function UserMenu({ variant }: { variant: "sidebar" | "compact" }) 
           </span>
         </span>
       </div>
-      <form action={signOut}>
+      <SignOutForm guest={!user.email}>
         <button
           type="submit"
           className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground focus-visible:outline-2 focus-visible:outline-brand"
         >
           <LogOut className="size-4" aria-hidden="true" />
-          Sign out
+          {user.email ? "Sign out" : "Leave demo"}
         </button>
-      </form>
+      </SignOutForm>
     </div>
   );
 }

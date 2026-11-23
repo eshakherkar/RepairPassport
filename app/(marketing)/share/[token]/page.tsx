@@ -59,7 +59,7 @@ async function SharedContent({ params }: Pick<PageProps<"/share/[token]">, "para
 
       <div className="grid items-start gap-6 lg:grid-cols-3">
         <div className="grid gap-6">
-          <ApplianceDetails appliance={appliance} />
+          <ApplianceDetails appliance={appliance} showSerialNumber={false} />
           <Suspense fallback={<ApplianceWarrantiesSkeleton />}>
             <ApplianceWarranties warranties={warranties} />
           </Suspense>

@@ -8,7 +8,7 @@ export function SiteFooter() {
           <Leaf className="size-4 text-brand" aria-hidden="true" />
           RepairPassport: helping household appliances last longer.
         </p>
-        <p>Early development preview</p>
+        <p>Built for LaunchPad Hacks</p>
       </div>
     </footer>
   );

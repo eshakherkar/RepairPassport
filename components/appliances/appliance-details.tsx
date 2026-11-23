@@ -4,12 +4,21 @@ import { formatDate } from "@/lib/format";
 import type { Appliance } from "@/lib/types";
 
 /** The appliance's basic facts: type, brand, model, serial number and so on. */
-export function ApplianceDetails({ appliance }: { appliance: Appliance }) {
+export function ApplianceDetails({
+  appliance,
+  showSerialNumber = true,
+}: {
+  appliance: Appliance;
+  /** The public share page hides it, so "Not recorded" would be misleading. */
+  showSerialNumber?: boolean;
+}) {
   const rows: [string, string][] = [
     ["Type", applianceCategoryLabels[appliance.category]],
     ["Brand", appliance.brand],
     ["Model", appliance.model],
-    ["Serial number", appliance.serialNumber ?? "Not recorded"],
+    ...(showSerialNumber
+      ? [["Serial number", appliance.serialNumber ?? "Not recorded"] as [string, string]]
+      : []),
     ["Location", appliance.location],
     ["Purchased", formatDate(appliance.purchaseDate)],
   ];

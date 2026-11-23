@@ -1,4 +1,5 @@
 import { Logo } from "@/components/logo";
+import { DemoButton } from "@/components/auth/demo-button";
 import { ButtonLink } from "@/components/ui/button-link";
 
 const navLinks = [
@@ -33,10 +34,8 @@ export function SiteHeader() {
               Sign in
             </ButtonLink>
           </span>
-          {/* Signed-out visitors are taken to sign-in first (proxy.ts). */}
-          <ButtonLink href="/dashboard" size="sm">
-            Open dashboard
-          </ButtonLink>
+          {/* Signed-in visitors are sent straight to their dashboard (startDemo). */}
+          <DemoButton size="sm" label="Try the demo" />
         </nav>
       </div>
     </header>
