@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { requestPasswordReset, type AuthFormState } from "@/lib/auth/actions";
 import { buttonClassName } from "@/components/ui/button-styles";
 import { FormMessage } from "@/components/ui/form-message";
@@ -11,6 +11,7 @@ const initialState: AuthFormState = {};
 
 export function ForgotPasswordForm() {
   const [state, formAction, pending] = useActionState(requestPasswordReset, initialState);
+  const [verified, setVerified] = useState(false);
 
   if (state.sent) {
     return (
@@ -34,13 +35,13 @@ export function ForgotPasswordForm() {
         defaultValue={state.email}
         error={state.fieldErrors?.email}
       />
-      <Turnstile resetKey={state} />
+      <Turnstile resetKey={state} onVerified={setVerified} />
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || !verified}
         className={buttonClassName("primary", "md", "w-full disabled:opacity-70")}
       >
-        {pending ? "Sending…" : "Email me a reset link"}
+        {!verified ? "Checking you’re human…" : pending ? "Sending…" : "Email me a reset link"}
       </button>
     </form>
   );

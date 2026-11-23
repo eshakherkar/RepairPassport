@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { signUp, type AuthFormState } from "@/lib/auth/actions";
 import { PASSWORD_MIN_LENGTH, PASSWORD_RULES } from "@/lib/auth/validation";
 import { buttonClassName } from "@/components/ui/button-styles";
@@ -13,6 +13,7 @@ const initialState: AuthFormState = {};
 
 export function SignUpForm() {
   const [state, formAction, pending] = useActionState(signUp, initialState);
+  const [verified, setVerified] = useState(false);
 
   return (
     <form action={formAction} className="grid gap-4" noValidate>
@@ -45,13 +46,13 @@ export function SignUpForm() {
         }
       />
 
-      <Turnstile resetKey={state} />
+      <Turnstile resetKey={state} onVerified={setVerified} />
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || !verified}
         className={buttonClassName("primary", "md", "w-full disabled:opacity-70")}
       >
-        {pending ? "Creating your account…" : "Create account"}
+        {!verified ? "Checking you’re human…" : pending ? "Creating your account…" : "Create account"}
       </button>
     </form>
   );

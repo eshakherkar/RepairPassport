@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { PlayCircle } from "lucide-react";
 import { startDemo, type AuthFormState } from "@/lib/auth/actions";
 import { buttonClassName, type ButtonSize, type ButtonVariant } from "@/components/ui/button-styles";
@@ -22,17 +22,18 @@ export function DemoButton({
   className?: string;
 }) {
   const [state, formAction, pending] = useActionState(startDemo, initialState);
+  const [verified, setVerified] = useState(false);
 
   return (
     <form action={formAction} className={`grid gap-2 ${className}`}>
-      <Turnstile resetKey={state} />
+      <Turnstile resetKey={state} onVerified={setVerified} />
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || !verified}
         className={buttonClassName(variant, size, `${size === "md" ? "h-11 px-5" : ""} disabled:opacity-70`)}
       >
         <PlayCircle className="size-4" aria-hidden="true" />
-        {pending ? "Starting…" : label}
+        {!verified ? (size === "sm" ? "Checking…" : "Checking you’re human…") : pending ? "Starting…" : label}
       </button>
       {state.error && <FormMessage tone="error">{state.error}</FormMessage>}
     </form>

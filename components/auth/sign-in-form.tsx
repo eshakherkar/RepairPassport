@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { signIn, type AuthFormState } from "@/lib/auth/actions";
 import { buttonClassName } from "@/components/ui/button-styles";
 import { PasswordField } from "@/components/ui/password-field";
@@ -16,6 +16,7 @@ const initialState: AuthFormState = {};
  */
 export function SignInForm({ next, notice }: { next: string; notice?: string }) {
   const [state, formAction, pending] = useActionState(signIn, initialState);
+  const [verified, setVerified] = useState(false);
 
   return (
     <form action={formAction} className="grid gap-4" noValidate>
@@ -47,13 +48,13 @@ export function SignInForm({ next, notice }: { next: string; notice?: string }) 
         error={state.fieldErrors?.password}
       />
 
-      <Turnstile resetKey={state} />
+      <Turnstile resetKey={state} onVerified={setVerified} />
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || !verified}
         className={buttonClassName("primary", "md", "w-full disabled:opacity-70")}
       >
-        {pending ? "Signing in…" : "Sign in"}
+        {!verified ? "Checking you’re human…" : pending ? "Signing in…" : "Sign in"}
       </button>
     </form>
   );
