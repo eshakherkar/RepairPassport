@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button-link";
 import { Suspense } from "react";
-import { DemoButton } from "@/components/auth/demo-button";
 import { AuthFormSkeleton, AuthHeading } from "@/components/auth/auth-heading";
 import { SignInForm } from "@/components/auth/sign-in-form";
 import { safeNextPath } from "@/lib/auth/routes";
@@ -34,7 +34,9 @@ export default function SignInPage({ searchParams }: PageProps<"/sign-in">) {
       </p>
       <div className="mt-8 grid gap-3 border-t border-border pt-6 text-center">
         <p className="text-sm text-muted">Just looking? Explore with sample appliances.</p>
-        <DemoButton variant="secondary" />
+        <ButtonLink href="/#try-demo" variant="secondary">
+          Try the demo, no sign-up
+        </ButtonLink>
       </div>
     </>
   );

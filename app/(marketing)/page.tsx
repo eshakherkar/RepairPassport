@@ -99,7 +99,7 @@ export default function Home() {
             issues, costs, replaced parts and warranty details, ready to share
             with a QR code.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-start">
+          <div id="try-demo" className="mt-8 flex scroll-mt-24 flex-col gap-3 sm:flex-row sm:items-start">
             <DemoButton />
             <Link
               href="/sign-up"

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DemoButton } from "@/components/auth/demo-button";
+import { ButtonLink } from "@/components/ui/button-link";
 import { AuthHeading } from "@/components/auth/auth-heading";
 import { SignUpForm } from "@/components/auth/sign-up-form";
 
@@ -24,7 +24,9 @@ export default function SignUpPage() {
       </p>
       <div className="mt-8 grid gap-3 border-t border-border pt-6 text-center">
         <p className="text-sm text-muted">Just looking? Explore with sample appliances.</p>
-        <DemoButton variant="secondary" />
+        <ButtonLink href="/#try-demo" variant="secondary">
+          Try the demo, no sign-up
+        </ButtonLink>
       </div>
     </>
   );

@@ -1,5 +1,4 @@
 import { Logo } from "@/components/logo";
-import { DemoButton } from "@/components/auth/demo-button";
 import { ButtonLink } from "@/components/ui/button-link";
 
 const navLinks = [
@@ -34,8 +33,10 @@ export function SiteHeader() {
               Sign in
             </ButtonLink>
           </span>
-          {/* Signed-in visitors are sent straight to their dashboard (startDemo). */}
-          <DemoButton size="sm" label="Try the demo" />
+          {/* A link, not a second bot-check form: it jumps to the demo button on the home page. */}
+          <ButtonLink href="/#try-demo" size="sm">
+            Try the demo
+          </ButtonLink>
         </nav>
       </div>
     </header>
