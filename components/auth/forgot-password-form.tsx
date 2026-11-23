@@ -5,6 +5,7 @@ import { requestPasswordReset, type AuthFormState } from "@/lib/auth/actions";
 import { buttonClassName } from "@/components/ui/button-styles";
 import { FormMessage } from "@/components/ui/form-message";
 import { TextField } from "@/components/ui/text-field";
+import { Turnstile } from "@/components/auth/turnstile";
 
 const initialState: AuthFormState = {};
 
@@ -33,6 +34,7 @@ export function ForgotPasswordForm() {
         defaultValue={state.email}
         error={state.fieldErrors?.email}
       />
+      <Turnstile resetKey={state} />
       <button
         type="submit"
         disabled={pending}

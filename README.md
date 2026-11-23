@@ -195,12 +195,13 @@ The database is PostgreSQL, hosted by Supabase. Its structure is defined by the 
 
 ## Environment variables and secrets
 
-RepairPassport uses [Supabase](https://supabase.com) for its database and sign-in, and Claude to read bills. It uses three environment variables:
+RepairPassport uses [Supabase](https://supabase.com) for its database and sign-in, and Claude to read bills. It uses up to four environment variables:
 
 | Variable | What it is |
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | The Supabase project URL, e.g. `https://abcdefghijklmnop.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | The project's **publishable** key (`sb_publishable_…`), safe for the browser because Row Level Security protects the data |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | *Optional, public.* Cloudflare Turnstile site key: adds an (usually invisible) bot check to the demo, sign-up, sign-in and forgot-password forms. Turn it on in Supabase too (**Authentication → Attack Protection → CAPTCHA**, with the Turnstile **secret** key), or sign-ins fail. |
 | `ANTHROPIC_API_KEY` | *Optional, server only.* An [Anthropic API key](https://console.anthropic.com) for reading bills with AI. Without it, bills still upload and the details are typed in. Each bill read costs a small amount on your Anthropic account. |
 
 To set them up:

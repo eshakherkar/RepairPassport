@@ -16,6 +16,13 @@ import { getCurrentUser, requireUser } from "./session";
 import { safeNextPath } from "./routes";
 import { validateEmail, validateNewPassword } from "./validation";
 
+/** The Cloudflare Turnstile pass token from the form, if the bot check is on. */
+function captchaToken(formData: FormData): string | undefined {
+  return String(formData.get("cf-turnstile-response") ?? "") || undefined;
+}
+
+const CAPTCHA_FAILED = "The quick bot check didn't finish. Please wait a moment and try again.";
+
 export type AuthFormState = {
   /** A message about the whole form, e.g. "Email or password is incorrect." */
   error?: string;
@@ -41,7 +48,11 @@ export async function signIn(
   if (fieldErrors.email || fieldErrors.password) return { email, fieldErrors };
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+    options: { captchaToken: captchaToken(formData) },
+  });
 
   if (error) {
     switch (error.code) {
@@ -53,6 +64,8 @@ export async function signIn(
         };
       case "over_request_rate_limit":
         return { email, error: "Too many attempts. Please wait a minute and try again." };
+      case "captcha_failed":
+        return { email, error: CAPTCHA_FAILED };
       default:
         // Deliberately vague: don't reveal whether the email has an account.
         return { email, error: "Email or password is incorrect." };
@@ -84,6 +97,7 @@ export async function signUp(
     options: {
       // Where the link in the confirmation email leads.
       emailRedirectTo: `${await getSiteOrigin()}/auth/confirm?next=/dashboard`,
+      captchaToken: captchaToken(formData),
     },
   });
 
@@ -91,6 +105,8 @@ export async function signUp(
     switch (error.code) {
       case "weak_password":
         return { email, fieldErrors: { password: "Choose a stronger password." } };
+      case "captcha_failed":
+        return { email, error: CAPTCHA_FAILED };
       case "user_already_exists":
         return {
           email,
@@ -136,7 +152,9 @@ export async function requestPasswordReset(
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${await getSiteOrigin()}/auth/confirm?next=/reset-password`,
+    captchaToken: captchaToken(formData),
   });
+  if (error?.code === "captcha_failed") return { email, error: CAPTCHA_FAILED };
   if (error?.code === "over_email_send_rate_limit") {
     return { email, error: "Too many emails were sent recently. Please wait a while and try again." };
   }
@@ -176,18 +194,22 @@ export async function updatePassword(
  * fictional sample appliances. Row Level Security keeps each guest's data
  * separate, so judges can't see or change each other's demos.
  */
-export async function startDemo(): Promise<AuthFormState> {
+export async function startDemo(_previous: AuthFormState, formData: FormData): Promise<AuthFormState> {
   // Already signed in (a real account or a guest): don't swap accounts.
   if (await getCurrentUser()) redirect("/dashboard");
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInAnonymously();
+  const { error } = await supabase.auth.signInAnonymously({
+    options: { captchaToken: captchaToken(formData) },
+  });
   if (error) {
     return {
       error:
         error.code === "over_request_rate_limit"
           ? "Too many demos were started recently. Please try again in a few minutes."
-          : "Couldn't start the demo. Please try again.",
+          : error.code === "captcha_failed"
+            ? CAPTCHA_FAILED
+            : "Couldn't start the demo. Please try again.",
     };
   }
 

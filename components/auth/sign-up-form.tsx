@@ -7,6 +7,7 @@ import { buttonClassName } from "@/components/ui/button-styles";
 import { PasswordField } from "@/components/ui/password-field";
 import { TextField } from "@/components/ui/text-field";
 import { FormMessage } from "@/components/ui/form-message";
+import { Turnstile } from "@/components/auth/turnstile";
 
 const initialState: AuthFormState = {};
 
@@ -44,6 +45,7 @@ export function SignUpForm() {
         }
       />
 
+      <Turnstile resetKey={state} />
       <button
         type="submit"
         disabled={pending}
